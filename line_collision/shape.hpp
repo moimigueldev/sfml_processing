@@ -34,8 +34,6 @@ class Shape {
 
 
 
-
-
       windowDims = sf::Vector2f(windowSize);
 
     }
@@ -61,7 +59,12 @@ class Shape {
       float dX = shape.getPosition().x - otherShape.getPosition().x;
       if(abs(dX) < shapeSize.x) {
         // std::cout << "Collide" << std::endl;
-        velocity.x = -velocity.x;
+        // velocity.x = -velocity.x;
+        float tempVel = velocity.x;
+        velocity.x = otherShape.getVelocity().x;
+
+        otherShape.setVelocity(sf::Vector2f(tempVel, velocity.y));
+
       }
       // Reset accelaration for the next frame
       acceleration *= 0.0f;
@@ -113,6 +116,15 @@ class Shape {
 
     void repositionShape(sf::Vector2f newPos) {
       shape.setPosition(newPos.x, newPos.y);
+    }
+
+    sf::Vector2f getVelocity() {
+      return velocity;
+    }
+
+    void setVelocity(sf::Vector2f newVel) {
+      velocity.x = newVel.x;
+      velocity.y = newVel.y;
     }
 
 
