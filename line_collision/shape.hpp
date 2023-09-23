@@ -12,6 +12,7 @@ class Shape {
     sf::Vector2f velocity = sf::Vector2f(0.0f, 0.0f);
     sf::Vector2f windowDims;
     sf::CircleShape shapePos;
+    float mass;
     const float SPEED = 6.0f;
     const float TERMINAL_VELOCITY = 30.0f;
     const float FRICTION = 1.007;
@@ -32,6 +33,10 @@ class Shape {
       shapePos.setOrigin(5, 5);  // Set the origin to the center of the dot
       shapePos.setPosition(shape.getPosition());
 
+
+
+      mass = ( size.x * 0.1f ) + (size.y * 0.1f);
+      std::cout << mass << std::endl; 
 
 
       windowDims = sf::Vector2f(windowSize);
@@ -57,14 +62,18 @@ class Shape {
       // Check for Collisions
      
       float dX = shape.getPosition().x - otherShape.getPosition().x;
-      if(abs(dX) < shapeSize.x) {
-        // std::cout << "Collide" << std::endl;
-        // velocity.x = -velocity.x;
+      float combinedHalfWidths = shapeSize.x / 2 + otherShape.getSize().x / 2;
+      if(abs(dX) < combinedHalfWidths){
         float tempVel = velocity.x;
-        velocity.x = otherShape.getVelocity().x;
+        // velocity.x = otherShape.getVelocity().x;
+        // otherShape.setVelocity(sf::Vector2f(tempVel, velocity.y));
 
-        otherShape.setVelocity(sf::Vector2f(tempVel, velocity.y));
 
+        float otherMass = otherShape.getMass();
+
+        velocity.x = (velocity.x *(mass - otherMass) / (mass + otherMass) ) + ((2.0f * otherMass) / (mass + otherMass) * otherShape.getVelocity().x);
+        float otherVelocity = ((2 * mass) / (mass + otherMass) * tempVel) - ((mass - otherMass) / (mass + otherMass) * otherShape.getVelocity().x);
+        otherShape.setVelocity(sf::Vector2f(otherVelocity, otherShape.getVelocity().y));
       }
       // Reset accelaration for the next frame
       acceleration *= 0.0f;
@@ -125,6 +134,16 @@ class Shape {
     void setVelocity(sf::Vector2f newVel) {
       velocity.x = newVel.x;
       velocity.y = newVel.y;
+    }
+
+
+    float getMass() {
+      return mass;
+    }
+
+
+    sf::Vector2f getSize() {
+      return shape.getSize();
     }
 
 
