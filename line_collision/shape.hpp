@@ -16,6 +16,8 @@ class Shape {
     const float SPEED = 6.0f;
     const float TERMINAL_VELOCITY = 30.0f;
     const float FRICTION = 1.007;
+      const float RESTITUTION = 0.85f;  // Add this line for restitution
+
     
 
   public:
@@ -35,7 +37,8 @@ class Shape {
 
 
 
-      mass = ( size.x * 0.1f ) + (size.y * 0.1f);
+      // mass = ( size.x * 0.1f ) + (size.y * 0.1f);
+      mass = shape.getSize().x * shape.getSize().y;
       std::cout << mass << std::endl; 
 
 
@@ -45,38 +48,40 @@ class Shape {
 
 
      void update(Shape& otherShape) {
-      sf::Vector2f position = shape.getPosition();
-      sf::Vector2f shapeSize = shape.getSize();
+       sf::Vector2f position = shape.getPosition();
+       sf::Vector2f shapeSize = shape.getSize();
 
       acceleration += gravity;
       velocity += acceleration;
 
-
       velocity.x = velocity.x > TERMINAL_VELOCITY ? TERMINAL_VELOCITY : velocity.x;
       velocity.y = velocity.y > TERMINAL_VELOCITY ? TERMINAL_VELOCITY : velocity.y;
 
+      shape.move(velocity);  // Move the shape first
 
-      shape.move(velocity);
+    // Check for Collisions
+    float dX = shape.getPosition().x - otherShape.getPosition().x;
+    float combinedHalfWidths = (shapeSize.x ) / 2 + otherShape.getSize().x / 2;
+    if (abs(dX) < combinedHalfWidths) {
+      float overlap = combinedHalfWidths - abs(dX);
 
+      // Move the shapes based on their masses to resolve the overlap
+      float totalMass = mass + otherShape.getMass();
+      float moveShape1 = overlap * (otherShape.getMass() / totalMass);
+      float moveShape2 = overlap * (mass / totalMass);
 
-      // Check for Collisions
-     
-      float dX = shape.getPosition().x - otherShape.getPosition().x;
-      float combinedHalfWidths = shapeSize.x / 2 + otherShape.getSize().x / 2;
-      if(abs(dX) < combinedHalfWidths){
-        float tempVel = velocity.x;
-        // velocity.x = otherShape.getVelocity().x;
-        // otherShape.setVelocity(sf::Vector2f(tempVel, velocity.y));
+      shape.setPosition(shape.getPosition().x + moveShape1, shape.getPosition().y);
+      otherShape.repositionShape(sf::Vector2f(otherShape.getPosition().x - moveShape2, otherShape.getPosition().y));
 
+      // Adjust velocities based on the collision and add restitution
+      float tempVel = velocity.x;
+      float otherMass = otherShape.getMass();
+      velocity.x = RESTITUTION * ((velocity.x * (mass - otherMass) + 2 * otherMass * otherShape.getVelocity().x) / (mass + otherMass));
+      otherShape.setVelocity(sf::Vector2f(RESTITUTION * ((otherShape.getVelocity().x * (otherMass - mass) + 2 * mass * tempVel) / (mass + otherMass)), otherShape.getVelocity().y));
+    }
 
-        float otherMass = otherShape.getMass();
-
-        velocity.x = (velocity.x *(mass - otherMass) / (mass + otherMass) ) + ((2.0f * otherMass) / (mass + otherMass) * otherShape.getVelocity().x);
-        float otherVelocity = ((2 * mass) / (mass + otherMass) * tempVel) - ((mass - otherMass) / (mass + otherMass) * otherShape.getVelocity().x);
-        otherShape.setVelocity(sf::Vector2f(otherVelocity, otherShape.getVelocity().y));
-      }
-      // Reset accelaration for the next frame
       acceleration *= 0.0f;
+
 
       if(( position.y + shapeSize.y / 2 ) + 10 > windowDims.y) {
         position.y = windowDims.y - shapeSize.y / 2;
@@ -102,8 +107,6 @@ class Shape {
       shapePos.setPosition(shape.getPosition().x, shape.getPosition().y);
 
       velocity = velocity / FRICTION;
-      // velocity.x = 0.0f;
-      // velocity.y = 0.0f;
     }
 
 
@@ -144,6 +147,27 @@ class Shape {
 
     sf::Vector2f getSize() {
       return shape.getSize();
+    }
+
+    bool clickedInside(sf::Vector2i pos) {
+
+      
+      sf::Vector2f position = shape.getPosition();
+
+     float halfWidth = shape.getSize().x / 2.0f;
+     float halfHeight = shape.getSize().y / 2.0f;
+
+      float left = position.x - halfWidth;
+      float right = position.x + halfWidth;
+      float top = position.y - halfHeight;
+      float bottom = position.y + halfHeight;
+
+
+      if(pos.x >= left && pos.x <= right && pos.y >= top && pos.y <= bottom) {
+        return true;
+      }
+
+      return false;
     }
 
 
