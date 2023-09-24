@@ -3,6 +3,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <random>
+#include <cmath>
 
 
 
@@ -20,12 +21,15 @@ class Circle {
     sf::Vector2f gravity = sf::Vector2f(0.0f, 1.0f);
     float angularVel = 0.0f;
     float angularAcc = 0.0f;
+    float mass;
 
+    const float TERMINAL_VELOCITY = 30.0f;
     const int RADIUS = genRandomInt(10, 100);
     const int OUTLINE_THICKNESS = 3;
-    const float FRICTION = 1.008;
+    const float FRICTION = 1.009;
     const float RESTITUTION = 0.8; // Keeps 80% of its momentum
     const double PI = 3.141592653589793;
+    
 
 
 
@@ -33,6 +37,8 @@ class Circle {
   public:
     Circle(sf::Vector2f windowDims) {
       windowSize = windowDims;
+      mass = PI * pow(RADIUS, 2);
+      std::cout << mass << std::endl;
       setupShapes();
 
     }
@@ -43,6 +49,10 @@ class Circle {
 
       
         angularVel += angularAcc;
+
+
+        velocity.x = velocity.x > TERMINAL_VELOCITY ? TERMINAL_VELOCITY : velocity.x;
+        velocity.y = velocity.y > TERMINAL_VELOCITY ? TERMINAL_VELOCITY : velocity.y;
 
         shape.rotate(angularVel);
         shape.move(velocity);
@@ -151,5 +161,34 @@ class Circle {
 
 
 
+    void resetPos(sf::Vector2f newPos) {
+      shape.setPosition(newPos.x, newPos.y);
+    }
+
+
+    sf::Vector2f getPos() {
+      return shape.getPosition();
+    }
+
+    int getRadius() {
+      return RADIUS;
+    }
+
+    sf::Vector2f getVelocity() {
+      return velocity;
+    }
+
+    void setVelocity(sf::Vector2f newVelocity) {
+      velocity.x = newVelocity.x;
+      velocity.y = newVelocity.y;
+    }
+
+    float getMass() {
+      return mass;
+    }
+
+    void setPosition(sf::Vector2f newPos) {
+      shape.setPosition(newPos.x, newPos.y);
+    }
 
 };
