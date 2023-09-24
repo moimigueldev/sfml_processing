@@ -18,11 +18,16 @@ class Circle {
     sf::Vector2f velocity = sf::Vector2f(0.0f, 0.0f);
     sf::Vector2f acceleration = sf::Vector2f(0.0f, 0.0f);
     sf::Vector2f gravity = sf::Vector2f(0.0f, 1.0f);
+    float angularVel = 0.0f;
+    float angularAcc = 0.0f;
 
     const int RADIUS = genRandomInt(10, 100);
     const int OUTLINE_THICKNESS = 3;
     const float FRICTION = 1.008;
     const float RESTITUTION = 0.8; // Keeps 80% of its momentum
+    const double PI = 3.141592653589793;
+
+
 
 
   public:
@@ -32,20 +37,26 @@ class Circle {
 
     }
 
-    void update() {
+   void update() {
+        acceleration += gravity;
+        velocity += acceleration;
 
+      
+        angularVel += angularAcc;
 
-      acceleration += gravity;
-      velocity += acceleration;
-      shape.move(velocity);
+        shape.rotate(angularVel);
+        shape.move(velocity);
 
-      // Border Checks
-      borderCheck();
+        // Border Checks
+        borderCheck();
 
-      acceleration *= 0.0f;
-      velocity = velocity / FRICTION;
+        acceleration *= 0.0f;
+        velocity = velocity / FRICTION;
+
+        angularVel = angularVel / FRICTION;
+
+        angularAcc = 0.0f;
     }
-
 
 
     void draw(sf::RenderWindow& window) {
@@ -54,8 +65,16 @@ class Circle {
       center.setPosition(shape.getPosition().x, shape.getPosition().y);
       window.draw(center);
 
+      // line[0].position = sf::Vector2f(shape.getPosition().x, shape.getPosition().y);
+      // line[1].position = sf::Vector2f(shape.getPosition().x + RADIUS, shape.getPosition().y);
+      float rotationInRadians = shape.getRotation() * (PI / 180.0);
+      float xOffset = RADIUS * cos(rotationInRadians);
+      float yOffset = RADIUS * sin(rotationInRadians);
       line[0].position = sf::Vector2f(shape.getPosition().x, shape.getPosition().y);
-      line[1].position = sf::Vector2f(shape.getPosition().x + RADIUS, shape.getPosition().y);
+      line[1].position = sf::Vector2f(xOffset,yOffset) + shape.getPosition();
+     
+
+
       window.draw(line);
     }
 
@@ -68,10 +87,19 @@ class Circle {
     }
 
 
-    void adjustAcc(float x, float y) {
-      acceleration.x += x;
-      acceleration.y += y;
+   void adjustAcc(float x, float y) {
+    acceleration.x += x;
+    acceleration.y += y;
+
+    // Determine the rotation direction based on the direction of the applied force
+    if (x > 0) {
+        angularAcc = -1.0f;  // Rotate clockwise
+    } else if (x < 0) {
+        angularAcc = 1.0f;  // Rotate counterclockwise
     }
+}
+
+
 
     void setupShapes() {
 
