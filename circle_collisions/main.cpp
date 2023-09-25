@@ -41,14 +41,10 @@ bool detectCollission(Circle& shape1, Circle& shape2) {
     
 
 
-    shape1.adjustAcc(finalvel1X, finalvel1Y);
+    // shape1.setVelocity(sf::Vector2f(finalvel1X, finalvel1Y));
+    shape1.adjustAcc(finalvel1X, finalvel2Y);
     shape2.adjustAcc(finalvel2X, finalvel2Y);
-   // Separation step
-float overlap = abs(radius1 + radius2 - distance);
-sf::Vector2f separationDirection = (position1 - position2) / distance; // Normalize the direction
-shape1.setPosition(position1 + (overlap * (mass2 / (mass1 + mass2))) * separationDirection);
-shape2.setPosition(position2 - (overlap * (mass1 / (mass1 + mass2))) * separationDirection);
-
+   
     
   }
 
