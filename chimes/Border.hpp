@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <array>
 #include <random>
 #include "Chime.hpp"
 
@@ -33,18 +34,20 @@ class Border {
     }
 
 
-    bool checkCollision(Chime& chime) {
-      sf::Vector2f chimePosition = chime.getPosition();
+    bool checkCollision(std::unique_ptr<Chime>& chime) {
+      sf::Vector2f chimePosition = chime->getPosition();
+      sf::Vector2f chimeVelocity = chime->getVelocity();
       int outlineBuffer = 5;
 
       if(chimePosition.x + outlineWidth * 2 + outlineBuffer>= border.getPosition().x + borderSize.x / 2 ) {
-        std::cout << "Hit" << std::endl;
-        chime.reversexVel();
+
+        chime->reversexVel();
+        // chime->setVelocity(sf::Vector2f(chimeVelocity.x * 0.99, chimeVelocity.y));
       }
 
       if(chimePosition.x - outlineWidth * 2 - outlineBuffer<= border.getPosition().x - borderSize.x / 2 ) {
-        std::cout << "Hit" << std::endl;
-        chime.reversexVel();
+        chime->reversexVel();
+        // chime->setVelocity(sf::Vector2f(chimeVelocity.x * 0.99, chimeVelocity.y));
       }
 
       return false;
