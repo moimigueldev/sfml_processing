@@ -6,7 +6,7 @@
 sf::Vector2f windowSize = sf::Vector2f(1500.0f, 800.0f);
 sf::Color bgColor = sf::Color(68, 70, 83);
 const int FRAMERATE = 60;
-const int nCircles = 15;
+const int nCircles = 20;
 
 
 int main() {

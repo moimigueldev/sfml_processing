@@ -3,23 +3,31 @@
 #include<SFML/Graphics.hpp>
 #include <cmath>
 #include <random>
+#include <SFML/Audio.hpp>
 
 class Circle {
   private:
     int RADIUS;
+    const std::string soundFile = "mech_keyboard.mp3";
     const int OUTLINE_THICKNESS = 5;
+    const int CORD_RADIUS = 10;
+    sf::Color cordColor;
     sf::CircleShape shape;
     sf::CircleShape center;
-    sf::CircleShape cord;
-    float radian = 0.0f;
+    sf::CircleShape cord; float radian = 0.0f;
     bool increasing = false;
     float radianSpeed;
     float opacity = 255.0f;
+
+    sf::SoundBuffer buffer;
+    sf::Sound sound;
+
 
   public:
    Circle(sf::Vector2f windowSize, int setRadius, float speed) {
     RADIUS = setRadius;
     radianSpeed = speed;
+    cordColor = sf::Color(genRandomNum(0, 255), genRandomNum(0, 255), genRandomNum(0, 255));
     shape.setRadius(RADIUS);
     shape.setOrigin(RADIUS, RADIUS);
     shape.setPosition(windowSize.x / 2, windowSize.y);
@@ -33,10 +41,20 @@ class Circle {
     center.setPosition(shape.getPosition().x, shape.getPosition().y);
     center.setFillColor(sf::Color::Blue);
 
-    cord.setRadius(5);
-    cord.setOrigin(5, 5);
+    cord.setRadius(CORD_RADIUS);
+    cord.setOrigin(CORD_RADIUS, CORD_RADIUS);
     cord.setPosition(shape.getPosition().x + RADIUS * cos(radian), shape.getPosition().y + RADIUS * sin(radian));
-    cord.setFillColor(sf::Color(genRandomNum(0, 255), genRandomNum(0, 255), genRandomNum(0, 255)));
+    cord.setFillColor(cordColor);
+    // cord.setOutlineThickness(OUTLINE_THICKNESS);
+    // cord.setOutlineColor(cordColor);
+    
+  
+    if(!buffer.loadFromFile(soundFile)) {
+      std::cerr << "Errro Loading sound from file!" << std::endl;
+    }
+    sound.setBuffer(buffer);
+
+
    }
 
 
@@ -52,9 +70,11 @@ class Circle {
     if(degrees <= -180.0f) {
       increasing = true;
       opacity = 255.0f;
+      sound.play();
     } else if(degrees >= 0.0f) {
       opacity = 255.0f;
       increasing = false;
+      sound.play();
     }
 
     if(increasing) {
@@ -64,7 +84,7 @@ class Circle {
     }
 
 
-    opacity -= 1.5;
+    opacity -= 1.0f;
 
 
 
@@ -75,7 +95,7 @@ class Circle {
 
    void draw(sf::RenderWindow& window) {
     window.draw(shape);
-    window.draw(center);
+    // window.draw(center);
     window.draw(cord);
    }
 
