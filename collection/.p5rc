@@ -1,6 +1,7 @@
 {
   "name": "collection",
   "projects": [
-    "circles-p5"
+    "circles-p5",
+    "maze_generator"
   ]
 }
