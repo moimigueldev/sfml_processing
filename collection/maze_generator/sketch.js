@@ -1,8 +1,9 @@
 let cols;
 let rows;
-const w = 40;
+const w = 20;
 const grid = [];
 let current;
+const stack = [];
 
 function setup() {
   createCanvas(400, 400);
@@ -19,7 +20,7 @@ function setup() {
 
   current = grid[0];
 
-  frameRate(5);
+  // frameRate(5);
 }
 
 function draw() {
@@ -34,9 +35,13 @@ function draw() {
   let next = current.checkNeighbors();
   if (next) {
     next.visited = true;
-
+    stack.push(current);
     removeWalls(current, next);
     current = next;
+  } else if (stack.length > 0) {
+    // pop() removes last elment from an array
+    current = stack.pop();
+    // console.log("stack", stack);
   }
 }
 
