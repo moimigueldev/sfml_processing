@@ -39,13 +39,12 @@ class Border {
       sf::Vector2f chimeVelocity = chime->getVelocity();
       int outlineBuffer = 5;
 
-      if(chimePosition.x + outlineWidth * 2 + outlineBuffer>= border.getPosition().x + borderSize.x / 2 ) {
-
+      if(chimePosition.x + outlineWidth * 2 + outlineBuffer > border.getPosition().x + borderSize.x / 2 ) {
         chime->reversexVel();
         // chime->setVelocity(sf::Vector2f(chimeVelocity.x * 0.99, chimeVelocity.y));
       }
 
-      if(chimePosition.x - outlineWidth * 2 - outlineBuffer<= border.getPosition().x - borderSize.x / 2 ) {
+      if(chimePosition.x - outlineWidth * 2 - outlineBuffer < border.getPosition().x - borderSize.x / 2 ) {
         chime->reversexVel();
         // chime->setVelocity(sf::Vector2f(chimeVelocity.x * 0.99, chimeVelocity.y));
       }

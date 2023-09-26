@@ -3,22 +3,22 @@
 #include <array>
 #include "Chime.hpp"
 #include "Border.hpp"
+#include <thread>
+#include <chrono>
 
 sf::Vector2f windowSize = sf::Vector2f(1500.0f, 1200.0f);
 sf::Vector2f borderSize = sf::Vector2f(750.0f, 1000.0f);
 int frameRate = 60;
 const int nChimes = 14;
 sf::Vector2f chimeVel = sf::Vector2f(6.09f, 0.0f);
-
 sf::Vector2f chimeSize = sf::Vector2f(50.0f, 50.0f);
-
 
 
 int main() {
   
 
+  
     
-  // sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Chimes", sf::Style::Fullscreen);
   sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "Chimes");
   window.setFramerateLimit(frameRate);
   
@@ -39,20 +39,28 @@ int main() {
 
     if(i == 0) {
       chimes[i] = std::make_unique<Chime>(window.getSize(), sf::Vector2f(chimePosX, chimePosY), chimeVel);
-      chimeVel.x -= 0.001;
+      chimeVel.x -= 0.01;
       continue;
     } 
 
     chimes[i] = std::make_unique<Chime>(window.getSize(), sf::Vector2f(chimePosX, chimePosY + chimeBuffer), chimeVel);
     chimeBuffer += chimeSize.y + padding;
-    chimeVel.x -= 0.001;
+    chimeVel.x -= 0.01;
 
   }
 
 
-  // Chime chime1 = Chime(window.getSize(), sf::Vector2f(chimePosX, chimePosY));
-  // Chime chime2 = Chime(window.getSize(), sf::Vector2f(chimePosX, chimePosY + chimeSize.y + padding));
-  //
+
+  std::thread([&chimes]() {
+    for (int i = 0; i < nChimes; i++) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      chimes[i]->setFinishedDelay(true);
+    }
+   
+
+  std::cout << "Complete" << std::endl;
+
+  }).detach();
 
   // Main Loop
   while(window.isOpen()) {
@@ -67,35 +75,27 @@ int main() {
     }
 
     window.clear(sf::Color(8, 7, 26));
-
     border.draw(window);
 
-    // chime1.update();
-    // chime1.draw(window);
-    // chime2.draw(window);
-
-
-
-    for (int i = 0; i < nChimes; i++) {
-      chimes[i]->update();
-      chimes[i]->draw(window);
-    }
-
-
-    for (int i = 0; i < nChimes; i++) {
-      
-    border.checkCollision(chimes[i]);
-    }
-
-
-
-    window.display();
     
 
+
+
+    for (int i = 0; i < nChimes; i++) {
+      if(chimes[i]->getFinishedDelay()) {
+        chimes[i]->update();
+      }
+      chimes[i]->draw(window);
+     
+    }
+
+
+    for (int i = 0; i < nChimes; i++) {
+      border.checkCollision(chimes[i]);
+    }
+
+    window.display();
+
   }
-
-
-
-
   return 0;
 }
