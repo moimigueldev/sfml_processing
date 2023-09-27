@@ -2,11 +2,16 @@
 #include <iostream>
 #include<SFML/Graphics.hpp>
 #include <cmath>
+#include <random>
+
+
+using std::cout;
+using std::endl;
 
 class Boid {
   private:
     sf::VertexArray boid;
-    sf::Vector2f velocity = sf::Vector2f(-9.0f, 0.0f);
+    sf::Vector2f velocity;
     sf::Vector2f acc = sf::Vector2f(0.0f, 0.0f);
     float terminalVelocity = 20.0f;
     float angle;
@@ -15,13 +20,23 @@ class Boid {
 
   public:
    Boid(sf::Vector2f center) {
-
-     angle = atan2(velocity.y, velocity.x);
-
      boid = sf::VertexArray(sf::Triangles, 3);
 
+    
+     do {
+        velocity.x = 6.0f * genRandomNum(-1.0f, 1.0f);
+    } while (std::abs(velocity.x) < 2.0f);  // Ensure minimum threshold
 
-     sf::Vector2f pos1 = center +  sf::Vector2f(length * cos(angle), length * sin(angle));
+    do {
+        velocity.y = 6.0f * genRandomNum(-1.0f, 1.0f);
+    } while (std::abs(velocity.y) < 2.0f);  // Ensure minimum threshold
+
+
+     // Calculate the able based on velcity (radians)
+     angle = atan2(velocity.y, velocity.x);
+
+     // tip of the traingle;
+     sf::Vector2f pos1 = center + sf::Vector2f(length * cos(angle), length * sin(angle));
      sf::Vector2f pos2 = center + sf::Vector2f(-halfBase * sin(angle), halfBase * cos(angle));
      sf::Vector2f pos3 = center - sf::Vector2f(-halfBase * sin(angle), halfBase * cos(angle));
 
@@ -33,6 +48,9 @@ class Boid {
 
      boid[2].position = pos3;
      boid[2].color = sf::Color::Red;
+
+
+     cout << velocity.x << " " << velocity.y << endl;
      
 
    }
@@ -51,7 +69,7 @@ class Boid {
       }
 
 
-      float desiredAngle = atan2(velocity.y, velocity.x);
+    float desiredAngle = atan2(velocity.y, velocity.x);
     float angleDifference = desiredAngle - angle;
 
     // Check if the angle difference is above a threshold (e.g., 0.01 radians)
@@ -73,26 +91,32 @@ class Boid {
 
 
 
-     if(boid[0].position.y < 0 ) {
-      boid[0].position = sf::Vector2f(boid[0].position.x, windowSize.y -30);
-      boid[1].position = sf::Vector2f(boid[1].position.x, windowSize.y );
-      boid[2].position = sf::Vector2f(boid[2].position.x, windowSize.y );
-     }
-     if(boid[0].position.y > windowSize.y ) {
-      boid[0].position = sf::Vector2f(boid[0].position.x, 30);
-      boid[1].position = sf::Vector2f(boid[1].position.x, 0 );
-      boid[2].position = sf::Vector2f(boid[2].position.x, 0 );
-     }
-     if(boid[0].position.x > windowSize.x ) {
-      boid[0].position.x = 30;
-      boid[1].position.x = 0;
-      boid[2].position.x = 0;
-     }
-     if(boid[0].position.x <  0 ) {
-      boid[0].position.x = windowSize.x - 30;
-      boid[1].position.x = windowSize.x;
-      boid[2].position.x = windowSize.x;
-     }
+     // Check if the boid's head goes out of bounds
+    if (boid[0].position.y < 0) {
+        float offset = 0 - boid[0].position.y;
+        for (int i = 0; i < 3; i++) {
+            boid[i].position.y += windowSize.y + offset;
+        }
+    }
+    if (boid[0].position.y > windowSize.y) {
+        float offset = boid[0].position.y - windowSize.y;
+        for (int i = 0; i < 3; i++) {
+            boid[i].position.y -= windowSize.y + offset;
+        }
+    }
+    if (boid[0].position.x > windowSize.x) {
+        float offset = boid[0].position.x - windowSize.x;
+        for (int i = 0; i < 3; i++) {
+            boid[i].position.x -= windowSize.x + offset;
+        }
+    }
+    if (boid[0].position.x < 0) {
+        float offset = 0 - boid[0].position.x;
+        for (int i = 0; i < 3; i++) {
+            boid[i].position.x += windowSize.x + offset;
+        }
+    }
+
 
 
      acc *= 0.0f;
@@ -118,6 +142,15 @@ class Boid {
       
     }
    }
+   
+  float genRandomNum(float min, float max) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> distrib(min, max);
+
+    return distrib(gen);
+
+  }
 
 };
 
