@@ -2,6 +2,8 @@
 #include <iostream>
 #include<SFML/Graphics.hpp>
 #include <cmath>
+#include <vector>
+#include <memory>
 #include <random>
 
 
@@ -12,17 +14,20 @@ class Boid {
   private:
     sf::VertexArray boid;
     sf::Vector2f velocity;
+    sf::Vector2f centerPos;
     sf::Vector2f acc = sf::Vector2f(0.0f, 0.0f);
     float terminalVelocity = 20.0f;
     float angle;
     float length = 30.0f; // Length from the center to the beak
     float halfBase = 10.0f; // Half of the base width of the triangle
+    int neighborhoodRadius = 100;
     sf::Color color;
 
   public:
    Boid(sf::Vector2f center) {
      boid = sf::VertexArray(sf::Triangles, 3);
      color = sf::Color(genRandomInt(0, 255), genRandomInt(0, 255), genRandomInt(0, 255));
+     centerPos = center;
 
     
      do {
@@ -161,6 +166,78 @@ class Boid {
     return distrib(gen);
 
   }
+
+  void highlightRadius(sf::RenderWindow& window) {
+
+    float centroidX = (boid[0].position.x + boid[1].position.x + boid[2].position.x) / 3;
+    float centroidY = (boid[0].position.y + boid[1].position.y + boid[2].position.y) / 3;
+
+    sf::CircleShape radiusCircle(neighborhoodRadius);
+    radiusCircle.setRadius(neighborhoodRadius);
+    radiusCircle.setPosition(centroidX - neighborhoodRadius, centroidY - neighborhoodRadius);
+    radiusCircle.setFillColor(sf::Color( 52, 127, 196, 50 ));
+    window.draw(radiusCircle);
+  }
+  
+  void seperation(const std::vector<std::unique_ptr<Boid> >& boids, int index) {
+
+
+    std::vector<Boid*> boidsInNeighborhood;
+    sf::Vector2f weightedAvoidenceVector;
+
+    for (int i = 0; i < boids.size(); i++) {
+      if(i == index) continue;
+      sf::Vector2f distance = getCentroid() - boids[i]->getCentroid();
+      float magnitude = sqrt(pow(distance.x, 2) + pow(distance.y, 2));
+      if(magnitude <= neighborhoodRadius) {
+        boidsInNeighborhood.push_back(boids[i].get());
+      }
+    }
+
+
+    for (int i = 0; i < boidsInNeighborhood.size(); i++) {
+      sf::Vector2f vectorToNeighbor = getCentroid() - boidsInNeighborhood[i]->getCentroid();
+      float inverseDistance;
+      float magnitude = sqrt(pow(vectorToNeighbor.x, 2) + pow(vectorToNeighbor.y, 2));
+      sf::Vector2f normalizedVector;
+
+      if(magnitude <= 0) {
+        normalizedVector = vectorToNeighbor;
+      } else {
+        normalizedVector.x = vectorToNeighbor.x / magnitude;
+        normalizedVector.y = vectorToNeighbor.y / magnitude;
+
+      }
+
+      if (magnitude <= 0) {
+        inverseDistance = 1000.0f;
+      } else {
+        inverseDistance = 1 / magnitude;
+      }
+
+
+      weightedAvoidenceVector.x += normalizedVector.x * inverseDistance;
+      weightedAvoidenceVector.y += normalizedVector.y * inverseDistance;
+
+    }
+      // cout << weightedAvoidenceVector.x << " " << weightedAvoidenceVector.y << endl;
+
+      weightedAvoidenceVector *= static_cast<float>( boidsInNeighborhood.size() ); // Scale by a factor of 5
+
+    acc += weightedAvoidenceVector;
+
+
+  }
+
+
+  sf::Vector2f getCentroid() {
+    float centroidX = (boid[0].position.x + boid[1].position.x + boid[2].position.x) / 3;
+    float centroidY = (boid[0].position.y + boid[1].position.y + boid[2].position.y) / 3;
+
+    return sf::Vector2f(centroidX, centroidY);
+    
+  }
+
 
 };
 
