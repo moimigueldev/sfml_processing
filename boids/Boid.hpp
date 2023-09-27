@@ -17,18 +17,20 @@ class Boid {
     float angle;
     float length = 30.0f; // Length from the center to the beak
     float halfBase = 10.0f; // Half of the base width of the triangle
+    sf::Color color;
 
   public:
    Boid(sf::Vector2f center) {
      boid = sf::VertexArray(sf::Triangles, 3);
+     color = sf::Color(genRandomInt(0, 255), genRandomInt(0, 255), genRandomInt(0, 255));
 
     
      do {
-        velocity.x = 6.0f * genRandomNum(-1.0f, 1.0f);
+        velocity.x = 6.0f * genRandomFloat(-1.0f, 1.0f);
     } while (std::abs(velocity.x) < 2.0f);  // Ensure minimum threshold
 
     do {
-        velocity.y = 6.0f * genRandomNum(-1.0f, 1.0f);
+        velocity.y = 6.0f * genRandomFloat(-1.0f, 1.0f);
     } while (std::abs(velocity.y) < 2.0f);  // Ensure minimum threshold
 
 
@@ -41,16 +43,15 @@ class Boid {
      sf::Vector2f pos3 = center - sf::Vector2f(-halfBase * sin(angle), halfBase * cos(angle));
 
      boid[0].position = pos1;
-     boid[0].color = sf::Color::Red;
+     boid[0].color = color;
 
      boid[1].position = pos2;
-     boid[1].color = sf::Color::Red;
+     boid[1].color = color;
 
      boid[2].position = pos3;
-     boid[2].color = sf::Color::Red;
+     boid[2].color = color;
 
 
-     cout << velocity.x << " " << velocity.y << endl;
      
 
    }
@@ -143,10 +144,19 @@ class Boid {
     }
    }
    
-  float genRandomNum(float min, float max) {
+  float genRandomFloat(float min, float max) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<float> distrib(min, max);
+
+    return distrib(gen);
+
+  }
+
+  static int genRandomInt(int min, int max) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distrib(min, max);
 
     return distrib(gen);
 
