@@ -13,32 +13,25 @@ using std::endl;
 class Boid {
   private:
     sf::VertexArray boid;
-    sf::Vector2f velocity;
     sf::Vector2f centerPos;
     sf::Vector2f acc = sf::Vector2f(0.0f, 0.0f);
-    float terminalVelocity = 20.0f;
+    float terminalVelocity = 5.0;
     float angle;
     float length = 30.0f; // Length from the center to the beak
     float halfBase = 10.0f; // Half of the base width of the triangle
-    int neighborhoodRadius = 100;
+    int neighborhoodRadius = 25;
     sf::Color color;
 
   public:
+    sf::Vector2f velocity;
    Boid(sf::Vector2f center) {
      boid = sf::VertexArray(sf::Triangles, 3);
      color = sf::Color(genRandomInt(0, 255), genRandomInt(0, 255), genRandomInt(0, 255));
      centerPos = center;
 
     
-     do {
-        velocity.x = 6.0f * genRandomFloat(-1.0f, 1.0f);
-    } while (std::abs(velocity.x) < 2.0f);  // Ensure minimum threshold
-
-    do {
-        velocity.y = 6.0f * genRandomFloat(-1.0f, 1.0f);
-    } while (std::abs(velocity.y) < 2.0f);  // Ensure minimum threshold
-
-
+    velocity.x = genRandomFloat(-terminalVelocity, terminalVelocity);
+    velocity.y = genRandomFloat(-terminalVelocity, terminalVelocity);
      // Calculate the able based on velcity (radians)
      angle = atan2(velocity.y, velocity.x);
 
@@ -64,39 +57,48 @@ class Boid {
 
    void update(sf::Vector2f windowSize) {
 
-     velocity += acc;
+      velocity += acc;
 
-     if( velocity.x > terminalVelocity) {
+    if (velocity.x > terminalVelocity) {
         velocity.x = terminalVelocity;
-      }
+    } else if (velocity.x < -terminalVelocity) {
+        velocity.x = -terminalVelocity;
+    }
 
-     if( velocity.y > terminalVelocity) {
+    if (velocity.y > terminalVelocity) {
         velocity.y = terminalVelocity;
-      }
-
+    } else if (velocity.y < -terminalVelocity) {
+        velocity.y = -terminalVelocity;
+    }
 
     float desiredAngle = atan2(velocity.y, velocity.x);
     float angleDifference = desiredAngle - angle;
 
-    // Check if the angle difference is above a threshold (e.g., 0.01 radians)
-    if (std::abs(angleDifference) > 0.01) {
-        angle = desiredAngle;
-        rotateTo();
+    // Ensure the angle difference is between -PI and PI
+    if (angleDifference > M_PI) {
+        angleDifference -= 2 * M_PI;
+    } else if (angleDifference < -M_PI) {
+        angleDifference += 2 * M_PI;
     }
 
-    
+    // Gradually adjust the angle
+    float angleAdjustmentRate = 0.1;  // Adjust this value as needed
+    angle += angleDifference * angleAdjustmentRate;
 
+    // Update triangle vertices based on the new angle
+    sf::Vector2f center = getCentroid();
+    sf::Vector2f pos1 = center + sf::Vector2f(length * cos(angle), length * sin(angle));
+    sf::Vector2f pos2 = center + sf::Vector2f(-halfBase * sin(angle), halfBase * cos(angle));
+    sf::Vector2f pos3 = center - sf::Vector2f(-halfBase * sin(angle), halfBase * cos(angle));
 
+    boid[0].position = pos1;
+    boid[1].position = pos2;
+    boid[2].position = pos3;
 
-
-     boid[0].position += velocity;
-     boid[1].position += velocity;
-     boid[2].position += velocity;
-
-
-
-
-
+    // Move the boid based on the velocity
+    boid[0].position += velocity;
+    boid[1].position += velocity;
+    boid[2].position += velocity;
      // Check if the boid's head goes out of bounds
     if (boid[0].position.y < 0) {
         float offset = 0 - boid[0].position.y;
@@ -125,7 +127,7 @@ class Boid {
 
 
 
-     acc *= 0.0f;
+     acc *= 0.9f;
 
    }
 
@@ -179,55 +181,77 @@ class Boid {
     window.draw(radiusCircle);
   }
   
-  void seperation(const std::vector<std::unique_ptr<Boid> >& boids, int index) {
-
-
+void seperation(const std::vector<std::unique_ptr<Boid> >& boids, int index) {
     std::vector<Boid*> boidsInNeighborhood;
-    sf::Vector2f weightedAvoidenceVector;
+    sf::Vector2f weightedAvoidanceVector;
+    sf::Vector2f averageVelocity = sf::Vector2f(0.0f, 0.0f);
+    sf::Vector2f averagePosition = sf::Vector2f(0.0f, 0.0f);
 
     for (int i = 0; i < boids.size(); i++) {
-      if(i == index) continue;
-      sf::Vector2f distance = getCentroid() - boids[i]->getCentroid();
-      float magnitude = sqrt(pow(distance.x, 2) + pow(distance.y, 2));
-      if(magnitude <= neighborhoodRadius) {
-        boidsInNeighborhood.push_back(boids[i].get());
-      }
+        if (i == index) continue;
+        sf::Vector2f distance = getCentroid() - boids[i]->getCentroid();
+        float magnitude = sqrt(pow(distance.x, 2) + pow(distance.y, 2));
+        if (magnitude <= neighborhoodRadius) {
+            boidsInNeighborhood.push_back(boids[i].get());
+        }
     }
-
 
     for (int i = 0; i < boidsInNeighborhood.size(); i++) {
-      sf::Vector2f vectorToNeighbor = getCentroid() - boidsInNeighborhood[i]->getCentroid();
-      float inverseDistance;
-      float magnitude = sqrt(pow(vectorToNeighbor.x, 2) + pow(vectorToNeighbor.y, 2));
-      sf::Vector2f normalizedVector;
+        sf::Vector2f vectorToNeighbor = getCentroid() - boidsInNeighborhood[i]->getCentroid();
+        float inverseDistance;
+        float magnitude = sqrt(pow(vectorToNeighbor.x, 2) + pow(vectorToNeighbor.y, 2));
+        sf::Vector2f normalizedVector;
 
-      if(magnitude <= 0) {
-        normalizedVector = vectorToNeighbor;
-      } else {
-        normalizedVector.x = vectorToNeighbor.x / magnitude;
-        normalizedVector.y = vectorToNeighbor.y / magnitude;
+        if (magnitude <= 0) {
+            normalizedVector = vectorToNeighbor;
+        } else {
+            normalizedVector.x = vectorToNeighbor.x / magnitude;
+            normalizedVector.y = vectorToNeighbor.y / magnitude;
+        }
 
-      }
+        if (magnitude <= 0) {
+            inverseDistance = 1000.0f;
+        } else {
+            inverseDistance = 1 / magnitude;
+        }
 
-      if (magnitude <= 0) {
-        inverseDistance = 1000.0f;
-      } else {
-        inverseDistance = 1 / magnitude;
-      }
+        weightedAvoidanceVector.x += normalizedVector.x * inverseDistance;
+        weightedAvoidanceVector.y += normalizedVector.y * inverseDistance;
 
+        // Alignment 
+        averageVelocity.x += boidsInNeighborhood[i]->velocity.x;
+        averageVelocity.y += boidsInNeighborhood[i]->velocity.y;
 
-      weightedAvoidenceVector.x += normalizedVector.x * inverseDistance;
-      weightedAvoidenceVector.y += normalizedVector.y * inverseDistance;
-
+        // Cohesion
+        averagePosition.x += boidsInNeighborhood[i]->getCentroid().x;
+        averagePosition.y += boidsInNeighborhood[i]->getCentroid().y;
     }
-      // cout << weightedAvoidenceVector.x << " " << weightedAvoidenceVector.y << endl;
 
-      weightedAvoidenceVector *= static_cast<float>( boidsInNeighborhood.size() ); // Scale by a factor of 5
+    if (!boidsInNeighborhood.empty()) {
+        averageVelocity.x /= boidsInNeighborhood.size();
+        averageVelocity.y /= boidsInNeighborhood.size();
+        averagePosition.x /= boidsInNeighborhood.size();
+        averagePosition.y /= boidsInNeighborhood.size();
+    }
 
-    acc += weightedAvoidenceVector;
+    float maxAcceleration = 0.5f;
 
+    weightedAvoidanceVector *= 10.5f;  // Increase the strength of separation
+    acc += weightedAvoidanceVector;
 
-  }
+    // acc += (averageVelocity - velocity) * 0.51f;  // Reduce the strength of alignment
+    //
+    // sf::Vector2f cohesionForce = averagePosition - getCentroid();
+    // acc += cohesionForce * 0.05f;  // Reduce the strength of cohesion
+    //
+    // Limit the acceleration magnitude
+    float accMagnitude = sqrt(acc.x * acc.x + acc.y * acc.y);
+    // if (accMagnitude > maxAcceleration) {
+    //     acc.x = (acc.x / accMagnitude) * maxAcceleration;
+    //     acc.y = (acc.y / accMagnitude) * maxAcceleration;
+    // }
+}
+
 
 
   sf::Vector2f getCentroid() {

@@ -8,8 +8,8 @@ using std::endl;
 
 sf::Vector2f windowSize = sf::Vector2f(1000.0f, 800.0f);
 sf::Color bgColor = sf::Color(68, 70, 83);
-const int FRAMERATE = 60;
-const int N_BOIDS = 20;
+const int FRAMERATE = 30;
+const int N_BOIDS = 50;
 
 
 int main() {
@@ -41,10 +41,11 @@ int main() {
     }
 
     window.clear(bgColor);
-boids[0]->highlightRadius(window);
-    boids[0]->seperation(boids, 0);
+
 
     for (int i = 0; i < N_BOIDS; i++) {
+      // boids[i]->highlightRadius(window);
+      boids[i]->seperation(boids, i);
       boids[i]->update(windowSize);
       boids[i]->draw(window);
     }
