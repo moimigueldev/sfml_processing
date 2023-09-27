@@ -103,9 +103,8 @@ Cell* checkNeighbors(const std::vector<std::unique_ptr<Cell> >& grid) {
 
      int x = i * width;
      int y = j * width;
-if(isVisited) {
-  cell.setFillColor(sf::Color(60, 82, 51, 100)); // 128 is 50% of 255
-
+    if(isVisited) {
+      cell.setFillColor(sf::Color(60, 82, 51, 100)); // 128 is 50% of 255
       window.draw(cell);
      }
     
