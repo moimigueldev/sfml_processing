@@ -33,10 +33,10 @@ int main() {
 
      switch (event.key.code) {
         case sf::Keyboard::Left:
-          slider.addAcc(sf::Vector2f(-1.5f, 0.0f));
+          slider.addAcc(sf::Vector2f(-2.0f, 0.0f));
           break;
         case sf::Keyboard::Right:
-          slider.addAcc(sf::Vector2f(1.5f, 0.0f));
+          slider.addAcc(sf::Vector2f(2.0f, 0.0f));
           break;
         default:
           break;
@@ -49,13 +49,14 @@ int main() {
     window.clear(bgColor);
 
 
-    ball.update();
+ slider.checkBallCollision(ball);
+    ball.update(windowSize);
     ball.draw(window);
 
 
     slider.update(windowSize);
     slider.draw(window);
-    slider.checkBallCollision(ball);
+   
 
     window.display();
 

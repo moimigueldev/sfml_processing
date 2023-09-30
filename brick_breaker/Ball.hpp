@@ -5,18 +5,18 @@
 
   class Ball  {
     private:
-      sf::Vector2f vel;
       sf::Vector2f acc;
       const float MAX_VEL = 40.0f;
       const float BALL_SPEED = 6.0f;
-
     public:
+      sf::Vector2f vel;
       sf::CircleShape ball;
       const int RADIUS = 10;
       Ball (sf::Vector2f position) {
 
         vel.x = getRandomFloat(BALL_SPEED, BALL_SPEED + 0.9f);
         vel.y = getRandomFloat(BALL_SPEED, BALL_SPEED + 0.9f);
+        vel.y *= -1;
 
 
         int xDirection = genRandomInt(0, 1);
@@ -27,9 +27,9 @@
           vel.x *= -1;
         }
 
-        if(yDirection == 1) {
-          vel.y *= -1;
-        }
+        // if(yDirection == 1) {
+          // vel.y *= -1;
+        // }
 
 
 
@@ -41,9 +41,23 @@
       }
 
 
-      void update() {
+      void update(sf::Vector2f windowSize) {
+        
       
         vel += acc;
+
+
+      if(ball.getPosition().x - RADIUS < 0 ) {
+        vel.x *= -1;
+      }
+
+      if(ball.getPosition().x + RADIUS > windowSize.x) {
+        vel.x *= -1;
+      }
+      if(ball.getPosition().y - RADIUS < 0) {
+        vel.y *= -1;
+      }
+        
 
 
         ball.move(vel);
