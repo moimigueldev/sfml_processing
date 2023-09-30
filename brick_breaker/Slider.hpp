@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
-#include<SFML/Graphics.hpp>
+#include <SFML/Graphics.hpp>
+#include "Ball.hpp"
 
 class Slider {
   private:
@@ -75,6 +76,11 @@ class Slider {
       vel.x = 0.0f;
       acc *= 0.0f;
  
+    }
+
+
+    bool checkBallCollision(Ball& ball) {
+      sf::Vector2f ballPosition = ball.ball.getPosition();
     }
 
 };
