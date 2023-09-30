@@ -8,7 +8,6 @@ let buffer = 20;
 let leftMost;
 let currentVertex;
 let index = 0;
-let nextIndex = -1;
 let nextVertex;
 
 function setup() {
@@ -30,6 +29,7 @@ function setup() {
   nextVertex = points[1];
   index = 2;
   frameRate(10);
+  console.log("leftMost", leftMost);
 }
 
 function draw() {
@@ -49,11 +49,13 @@ function draw() {
   }
   endShape(CLOSE);
 
+  // left most only (green point)
   stroke(0, 255, 0);
   strokeWeight(32);
   point(leftMost.x, leftMost.y);
 
-  stroke(200, 0, 255);
+  // current Vertext (green line)
+  stroke(0, 0, 255);
   strokeWeight(32);
   point(currentVertex.x, currentVertex.y);
 
@@ -65,7 +67,10 @@ function draw() {
   stroke(255);
   line(currentVertex.x, currentVertex.y, checking.x, checking.y);
 
+  // vertext from current point to next point
   const a = p5.Vector.sub(nextVertex, currentVertex);
+
+  // vertex from current point to checking point
   const b = p5.Vector.sub(checking, currentVertex);
   const cross = a.cross(b);
 
@@ -73,7 +78,6 @@ function draw() {
 
   if (cross.z < 0) {
     nextVertex = checking;
-    nextIndex = index;
   }
   index = index + 1;
   if (index == points.length) {
@@ -84,7 +88,6 @@ function draw() {
     hull.push(nextVertex);
     currentVertex = nextVertex;
     index = 0;
-    // points.splice(nextIndex, 1);
     nextVertex = leftMost;
     // noLoop();
   }

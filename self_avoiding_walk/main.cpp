@@ -8,24 +8,24 @@
 sf::Vector2f windowSize = sf::Vector2f(1000.0f, 800.0f);
 sf::Color bgColor = sf::Color(68, 70, 83);
 const int FRAMERATE = 10;
-const int PATH_SIZE = 5;
+const int PATH_SIZE = 4;
 const float COLS = floor(windowSize.x / PATH_SIZE);
 const float ROWS = floor(windowSize.y / PATH_SIZE);
 int count = 0;
-int n_denied = 64;;
+int n_denied = 100;;
 bool bufferOperationDone = false;
 
 int main() {
 
 
     std::vector<sf::Vertex> deleteBuffer;
-    std::vector<std::unique_ptr<Cell>> grid;
+    std::vector<std::unique_ptr<Cell> > grid;
     std::vector<Cell*> stack;
     std::vector<sf::Vector2f> visitedCords;
     sf::VertexArray lines(sf::LineStrip);
     lines.append(sf::Vertex(sf::Vector2f(0, 0), sf::Color::Red));
 
-    sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "SFML");
+    sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "SELF AVOIDING WALK");
     window.setFramerateLimit(300);
   sf::Texture texture;
 texture.create(window.getSize().x, window.getSize().y);

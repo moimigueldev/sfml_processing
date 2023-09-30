@@ -46,7 +46,7 @@ class Cell {
       cell.setOrigin(sf::Vector2f(0, 0));
       
 
-      point.setRadius(5);
+       point.setRadius(5);
        point.setOrigin(5, 5);
        point.setFillColor(sf::Color::Red);
        point.setPosition(position.x * width, position.y * width);
@@ -147,7 +147,7 @@ class Cell {
 
       for (std::size_t i = 0; i < lines.getVertexCount(); ++i) {
         if (lines[i].position == point) {
-          cout << "true" << endl;
+          // cout << "true" << endl;
             return true;  // The point exists in the line
         }
     }
