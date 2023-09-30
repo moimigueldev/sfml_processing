@@ -55,20 +55,21 @@ int main() {
     nodes.push_back(sf::Vector2f(sf::Vector2f(genRandomInt(0, static_cast<int>(windowSize.x)),genRandomInt(0, static_cast<int>(windowSize.y)))));
   }
 
+  std::sort(nodes.begin(), nodes.end(), compareVectors);
 
 
-  sf::VertexArray path(sf::Lines);
+  sf::VertexArray path(sf::LineStrip);
   sf::Vector2f& startingNode = nodes[0];
   sf::Vector2f& endingNode = nodes[nodes.size() - 1];
   sf::Vector2f& nextNode = nodes[0];
-  float cost = 0.0f;
+  sf::Vector2f currentNode = nodes[0];
+  auto cost = std::numeric_limits<float>::max();
   int lowestCostIndex;
   int index = 1;
   path.append(startingNode);
 
 
   // Sort the nodes
-  std::sort(nodes.begin(), nodes.end(), compareVectors);
 
   sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "A * Algorithm (random points)");
   window.setFramerateLimit(FRAMERATE);
@@ -110,13 +111,17 @@ int main() {
 
     // Check nodes
     sf::Vector2f& checking = nodes[index];
-    if(checking != startingNode && notInVisited(nodes[index], path)) {
+    if(currentNode == endingNode) {
+      
+      std::cout << "DONE: "  << std::endl;
+    }
+    if(checking != currentNode && notInVisited(nodes[index], path)) {
 
       // Cost of currentNode and  startingNode
-      float g = abs(sqrt(pow(checking.x - startingNode.x , 2) + pow(checking.y - startingNode.y , 2)));
+      float g = sqrt(pow(checking.x - currentNode.x , 2) + pow(checking.y - currentNode.y , 2));
 
       // Cost of currentNode to endingNode
-      float h = abs(sqrt(pow(checking.x - endingNode.x , 2) + pow(checking.y - endingNode.y , 2)));
+      float h = sqrt(pow(checking.x - endingNode.x , 2) + pow(checking.y - endingNode.y , 2));
 
 
       // total cost
@@ -126,7 +131,6 @@ int main() {
       if(cost == 0.0f) {
 
         cost = f;
-
         lowestCostIndex = index;
       }
 
@@ -136,7 +140,6 @@ int main() {
         lowestCostIndex = index;
       }
 
-      std::cout << "cost: " << cost << std::endl;
 
     }
 
@@ -145,9 +148,10 @@ int main() {
 
     if(index == nodes.size()) {
       std::cout << "Done: " << cost << std::endl;
-      cost = 0.0f;
+      cost = std::numeric_limits<float>::max();
       path.append(nodes[lowestCostIndex]);
-      // currentNode = nodes[lowestCostIndex];
+      currentNode = nodes[lowestCostIndex];
+      lowestCostIndex = 0;
       index = 0;
     }
 
