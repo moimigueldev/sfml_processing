@@ -5,7 +5,7 @@
 sf::Vector2i windowSize = sf::Vector2i(1000, 800);
 sf::Color bgColor = sf::Color(68, 70, 83);
 const int FRAMERATE = 60;
-const int N_RAINDROP = 200;
+const int N_RAINDROP = 10000;
 
 
 // auto recSize = sf::Vector2f(200.0f, 0.0f);
@@ -18,6 +18,16 @@ void setupRain(std::vector<RainDrop>& rainList) {
     int randY = RainDrop::genRandomInt(0, windowSize.y);
     RainDrop newRainDrop = RainDrop(sf::Vector2f(static_cast<float>(randX), static_cast<float>(randY)));
     rainList.push_back(newRainDrop);
+  }
+}
+
+
+void addWind(int direction, std::vector<RainDrop>& rain, sf::Vector2f force) {
+  float degreesOfRotation = 0.5 * direction;
+  for (int i = 0; i < N_RAINDROP; i++) {
+    rain[i].rotate(degreesOfRotation);
+    rain[i].addAcc(sf::Vector2f(force.x, force.y));
+
   }
 }
 
@@ -53,10 +63,10 @@ int main() {
       
       switch (event.key.code) {
         case sf::Keyboard::Left:
-          // circle.move(-1, 0);
+          addWind(1, rain, sf::Vector2f(-2, 0));
           break;
         case sf::Keyboard::Right:
-          // circle.move(1, 0);
+          addWind(-1, rain, sf::Vector2f(2, 0));
           break;
         case sf::Keyboard::Up:
           // circle.move(0, -1);
@@ -75,7 +85,7 @@ int main() {
 
     }
 
-    window.clear(bgColor);
+    window.clear(sf::Color::Black);
 
 
     for (int i = 0; i < N_RAINDROP; i++) {
