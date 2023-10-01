@@ -59,10 +59,10 @@ int main() {
 
      switch (event.key.code) {
         case sf::Keyboard::Left:
-          slider.addAcc(sf::Vector2f(-1.0f, 0.0f));
+          slider.addAcc(sf::Vector2f(-2.0f, 0.0f));
           break;
         case sf::Keyboard::Right:
-          slider.addAcc(sf::Vector2f(1.0f, 0.0f));
+          slider.addAcc(sf::Vector2f(2.0f, 0.0f));
           break;
         default:
           break;
@@ -77,8 +77,19 @@ int main() {
 
      slider.checkBallCollision(ball);
 
-     for (int i = 0; i < bricks.size(); i++) {
-       bricks[i].checkBallCollision(ball);
+     // for (int i = 0; i < bricks.size(); i++) {
+     //   bool collision = bricks[i].checkBallCollision(ball);
+     //   
+     //   bricks[i].draw(window);
+     //
+     // }
+     for (int i = bricks.size() - 1; i >= 0  ; i--) {
+       bool collision = bricks[i].checkBallCollision(ball);
+       if(collision) {
+        bricks.erase(bricks.begin() + i);
+       } 
+     }
+     for (int i = bricks.size() - 1; i >= 0  ; i--) {
        bricks[i].draw(window);
      }
 
