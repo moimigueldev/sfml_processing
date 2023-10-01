@@ -6,16 +6,16 @@
 
 class Brick {
   private:
-    sf::Vector2f brickSize = sf::Vector2f(80.0f, 15.0f);
+    sf::Vector2f brickSize = sf::Vector2f(80.0f, 25.0f);
 
 
   public:
     sf::RectangleShape brick;
-    Brick(sf::Vector2f pos) {
+    Brick(sf::Vector2f pos, sf::Color color) {
       brick.setPosition(pos.x, pos.y);
       brick.setSize(brickSize);
       brick.setOrigin(brickSize.x / 2, brickSize.y / 2);
-      brick.setFillColor(sf::Color::Blue);
+      brick.setFillColor(color);
     }
 
 

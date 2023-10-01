@@ -3,21 +3,25 @@
 #include "Slider.hpp"
 #include "Ball.hpp"
 #include "Brick.hpp"
+#include <cmath>
+#include <array>
 
 sf::Vector2f windowSize = sf::Vector2f(1500.0f, 800.0f);
 sf::Color bgColor = sf::Color(68, 70, 83);
 const int FRAMERATE = 60;
 Slider slider = Slider(sf::Vector2f( windowSize.x / 2, windowSize.y - 100 ));
 Ball ball = Ball(sf::Vector2f( windowSize.x / 2, windowSize.y / 2 ));
-Brick brick = Brick(sf::Vector2f( windowSize.x / 2, windowSize.y / 2 - 200 ));
 
 
-sf::Vector2f brickSize = sf::Vector2f(80.0f, 15.0f);
 
-const float PADDING = 10.0f; // Define a padding value
+sf::Vector2f brickSize = sf::Vector2f(80.0f, 25.0f);
 
-int cols = (windowSize.x - PADDING) / (brickSize.x + PADDING);
-int rows = (windowSize.y / 2 - PADDING) / (brickSize.y + PADDING);
+const float PADDING = 20.0f; // Define a padding value
+
+int cols = static_cast<int>((windowSize.x - PADDING) / (brickSize.x + PADDING));
+int rows = 6;
+sf::Color colors[5] = {sf::Color(214, 40, 57), sf::Color(186, 50, 79), sf::Color(23, 86, 118), sf::Color(75, 163, 195), sf::Color(204, 230, 244)};
+
 
 // Components:
     // Bottom slider
@@ -26,6 +30,7 @@ int rows = (windowSize.y / 2 - PADDING) / (brickSize.y + PADDING);
 
 
 int main() {
+  std::cout << cols << std::endl;
 
 
   std::vector<Brick> bricks;
@@ -33,9 +38,9 @@ int main() {
 
  for (int j = 0; j < rows; j++) {
     for (int i = 0; i < cols; i++) {
-        float x = PADDING + i * (brickSize.x + PADDING);
-        float y = PADDING + j * (brickSize.y + PADDING);
-        bricks.push_back(Brick(sf::Vector2f(x, y)));
+        float x = 70 + ( i * (brickSize.x + PADDING) );
+        float y = 50 + ( j * (brickSize.y + PADDING) );
+        bricks.push_back(Brick(sf::Vector2f(x, y), colors[j]));
     }
 }
 
@@ -73,6 +78,7 @@ int main() {
      slider.checkBallCollision(ball);
 
      for (int i = 0; i < bricks.size(); i++) {
+       bricks[i].checkBallCollision(ball);
        bricks[i].draw(window);
      }
 
