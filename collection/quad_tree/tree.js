@@ -21,6 +21,16 @@ class Rectangle {
       point.y <= this.y + this.h
     );
   }
+
+  // given a range (Rectangle) does that range intersect this range
+  intersects(range) {
+    return !(
+      range.x - range.w > this.x + this.w ||
+      range.x + range.w < this.x - this.w ||
+      range.y - range.h > this.y + this.h ||
+      range.y + range.h < this.y - this.h
+    );
+  }
 }
 
 class QuadTree {
@@ -70,6 +80,27 @@ class QuadTree {
     }
   }
 
+  query(range) {
+    const found = [];
+    if (!this.boundary.intersects(range)) {
+      return found;
+    } else {
+      for (let p of this.points) {
+        if (range.contains(p)) {
+          found.push(p);
+        }
+      }
+
+      if (this.devided) {
+        found.push(...this.northwest.query(range));
+        found.push(...this.northeast.query(range));
+        found.push(...this.southwest.query(range));
+        found.push(...this.southeast.query(range));
+      }
+      return found;
+    }
+  }
+
   show() {
     stroke(255);
     noFill();
@@ -90,7 +121,7 @@ class QuadTree {
 
     for (let p of this.points) {
       strokeWeight(4);
-      // point(p.x, p.y);
+      point(p.x, p.y);
     }
   }
 }
