@@ -52,20 +52,21 @@ class QuadTree {
 
   insert(point) {
     if (!this.boundary.contains(point)) {
-      return;
+      return false;
     }
 
     if (this.points.length < this.capacity) {
       this.points.push(point);
+      return true;
     } else {
       if (!this.devided) {
         this.subdivide();
       }
 
-      this.northeast.insert(point);
-      this.southwest.insert(point);
-      this.northwest.insert(point);
-      this.southeast.insert(point);
+      if (this.northeast.insert(point)) return true;
+      if (this.southwest.insert(point)) return true;
+      if (this.northwest.insert(point)) return true;
+      if (this.southeast.insert(point)) return true;
     }
   }
 
