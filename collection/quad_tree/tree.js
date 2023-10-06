@@ -15,10 +15,10 @@ class Rectangle {
 
   contains(point) {
     return (
-      point.x > this.x - this.w &&
-      point.x < this.x + this.w &&
-      point.y > this.y - this.h &&
-      point.y < this.y + this.h
+      point.x >= this.x - this.w &&
+      point.x <= this.x + this.w &&
+      point.y >= this.y - this.h &&
+      point.y <= this.y + this.h
     );
   }
 }
@@ -66,6 +66,30 @@ class QuadTree {
       this.southwest.insert(point);
       this.northwest.insert(point);
       this.southeast.insert(point);
+    }
+  }
+
+  show() {
+    stroke(255);
+    noFill();
+    strokeWeight(1);
+    rectMode(CENTER);
+    rect(
+      this.boundary.x,
+      this.boundary.y,
+      this.boundary.w * 2,
+      this.boundary.h * 2
+    );
+    if (this.devided) {
+      this.northwest.show();
+      this.northeast.show();
+      this.southwest.show();
+      this.southeast.show();
+    }
+
+    for (let p of this.points) {
+      strokeWeight(4);
+      // point(p.x, p.y);
     }
   }
 }
