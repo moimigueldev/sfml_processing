@@ -4,6 +4,8 @@
     "circles-p5",
     "maze_generator",
     "3blue1brown_pi_collision",
-    "gift_wrapping"
+    "gift_wrapping",
+    "a_star",
+    "quad_tree"
   ]
 }
