@@ -21,8 +21,6 @@ int genRandomInt(int min, int max) {
 }
 
 int main() {
-  Point point = Point(sf::Vector2f(200, 200));
-
   Rectangle boundary =
       Rectangle(sf::Vector2f(windowSize.x / 2, windowSize.y / 2),
                 sf::Vector2f(windowSize.x, windowSize.y));
@@ -37,7 +35,8 @@ int main() {
     sf::Vector2f position =
         sf::Vector2f(static_cast<float>(genRandomInt(0, windowSize.x)),
                      static_cast<float>(genRandomInt(0, windowSize.y)));
-    points.push_back(position);
+    points.push_back(Point(position));
+    qtree.insert(position);
   }
 
   sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "SFML");
@@ -51,26 +50,41 @@ int main() {
       if (event.type == sf::Event::Closed) {
         window.close();
       }
-
-      if (event.type == sf::Event::MouseButtonPressed) {
-        float mouseX = event.mouseButton.x;
-        float mouseY = event.mouseButton.y;
-        cout << "Pressed " << mouseX << " " << mouseY << endl;
-        qtree.insert(sf::Vector2f(mouseX, mouseY));
-      }
+      //
+      // if (event.type == sf::Event::MouseButtonPressed) {
+      //   float mouseX = event.mouseButton.x;
+      //   float mouseY = event.mouseButton.y;
+      //   cout << "Pressed " << mouseX << " " << mouseY << endl;
+      //   points.push_back(Point(sf::Vector2f(mouseX, mouseY)));
+      //   qtree.insert(sf::Vector2f(mouseX, mouseY));
+      // }
     }
 
-    // if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-    //   float mouseX = event.mouseButton.x;
-    //   float mouseY = event.mouseButton.y;
-    //   cout << "Pressed " << mouseX << " " << mouseY << endl;
-    //   qtree.insert(sf::Vector2f(mouseX, mouseY));
-    // }
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+      float offsetX = genRandomInt(-10, 10);
+      float offsetY = genRandomInt(-10, 10);
+      sf::Vector2i mousePos =
+          sf::Mouse::getPosition(window);  // Get the current mouse position
+      float mouseX = static_cast<float>(mousePos.x) + offsetX;
+      float mouseY = static_cast<float>(mousePos.y) + offsetY;
+      cout << "Pressed " << mouseX << " " << mouseY << endl;
+      points.push_back(Point(sf::Vector2f(mouseX, mouseY)));
+      qtree.insert(sf::Vector2f(mouseX, mouseY));
+    }
 
     window.clear(bgColor);
 
     // boundary.draw(window);
     qtree.draw(window);
+
+    for (int i = 0; i < points.size(); i++) {
+      sf::CircleShape p;
+      p.setRadius(3);
+      p.setOrigin(3, 3);
+      p.setOutlineColor(sf::Color::Green);
+      p.setPosition(points[i].x, points[i].y);
+      window.draw(p);
+    }
 
     window.display();
   }

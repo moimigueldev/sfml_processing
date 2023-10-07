@@ -112,7 +112,7 @@ class QuadTree {
 
   void draw(sf::RenderWindow& window) {
     window.draw(boundary.shape);
-    window.draw(boundary.center);
+    // window.draw(boundary.center);
     if (divided) {
       northwest->draw(window);
       northeast->draw(window);
