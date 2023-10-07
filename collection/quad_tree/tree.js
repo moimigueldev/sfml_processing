@@ -14,14 +14,14 @@ class Rectangle {
     this.h = h;
   }
 
-  contains(point) {
-    return (
-      point.x >= this.x - this.w &&
-      point.x <= this.x + this.w &&
-      point.y >= this.y - this.h &&
-      point.y <= this.y + this.h
-    );
-  }
+ bool contains(sf::Vector2f point) {
+    sf::Vector2f pos = shape.getPosition();
+    sf::Vector2f size = shape.getSize();
+
+    return (point.x >= pos.x - size.x / 2 && point.x <= pos.x + size.x / 2 &&
+            point.y >= pos.y - size.y / 2 && point.y <= pos.y + size.y / 2);
+}
+
 
   // given a range (Rectangle) does that range intersect this range
   intersects(range) {
