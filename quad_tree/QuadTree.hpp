@@ -1,9 +1,31 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <algorithm>
 #include <iostream>
+
+#include "Point.hpp"
 
 using std::cout;
 using std::endl;
+
+class Circle {
+ public:
+  float x, y, r, rSquared;
+
+  Circle(float x, float y, float r) : x(x), y(y), r(r), rSquared(r * r) {}
+
+  bool contains(const sf::Vector2f& point) const {
+    float d = std::pow(point.x - x, 2) + std::pow(point.y - y, 2);
+    return d <= rSquared;
+  }
+
+  bool intersects(const Circle& other) const {
+    float xDist = std::abs(other.x - x);
+    float yDist = std::abs(other.y - y);
+    float distance = std::sqrt(xDist * xDist + yDist * yDist);
+    return distance <= (r + other.r);
+  }
+};
 
 class Rectangle {
  private:
@@ -32,6 +54,25 @@ class Rectangle {
             point.y >= pos.y - size.y / 2 && point.y <= pos.y + size.y / 2);
   }
 
+  bool intersects(const Circle& circle) const {
+    // Get the rectangle's position and size
+    sf::Vector2f rectPos = shape.getPosition();
+    sf::Vector2f rectSize = shape.getSize();
+
+    // Find the closest point on the rectangle to the circle's center
+    float closestX = std::max(rectPos.x - rectSize.x / 2,
+                              std::min(circle.x, rectPos.x + rectSize.x / 2));
+    float closestY = std::max(rectPos.y - rectSize.y / 2,
+                              std::min(circle.y, rectPos.y + rectSize.y / 2));
+
+    // Calculate the distance between the circle's center and this closest point
+    float dx = circle.x - closestX;
+    float dy = circle.y - closestY;
+    float distanceSquared = dx * dx + dy * dy;
+
+    // Check if the distance is less than the circle's radius
+    return distanceSquared <= (circle.r * circle.r);
+  }
   void draw(sf::RenderWindow& window) {
     window.draw(shape);
     window.draw(center);
@@ -60,7 +101,7 @@ class QuadTree {
 
     if (points.size() < capacity) {
       points.push_back(point);
-      cout << "Inserted Point No Subdevide" << endl;
+      // cout << "Inserted Point No Subdevide" << endl;
       return true;
     }
 
@@ -108,6 +149,34 @@ class QuadTree {
     southeast = new QuadTree(se, capacity);
 
     divided = true;
+  }
+
+  std::vector<Point> query(const Circle& range,
+                           std::vector<Point>& found) const {
+    // if range does not intersect the boundary of this quadtree, return empty
+    // vector
+    if (!boundary.intersects(range)) {
+      return found;
+    }
+
+    // check each point in this quadtree node to see if it's within the range
+    for (const auto& point : points) {
+      if (range.contains(point)) {
+        found.push_back(Point(point));  // assuming Point has a constructor that
+                                        // takes a sf::Vector2f
+      }
+    }
+
+    // if this quadtree node has been subdivided, recursively query each
+    // subdivision
+    if (divided) {
+      northwest->query(range, found);
+      northeast->query(range, found);
+      southwest->query(range, found);
+      southeast->query(range, found);
+    }
+
+    return found;
   }
 
   void draw(sf::RenderWindow& window) {
