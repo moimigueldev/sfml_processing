@@ -36,7 +36,8 @@ int main() {
     // tree.insert(particles[i]);
   }
 
-  sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "SFML");
+  sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y),
+                          "QuadTree");
   window.setFramerateLimit(FRAMERATE);
 
   // Main Loop
