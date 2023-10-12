@@ -7,8 +7,9 @@
 #include "Rectangle.hpp"
 
 sf::Vector2f windowSize = sf::Vector2f(1000.0f, 800.0f);
-sf::Color bgColor = sf::Color(68, 70, 83);
+sf::Color bgColor = sf::Color(0, 0, 0);
 const int FRAMERATE = 60;
+const int N_PARTICLES = 0;
 
 int genRandomInt(int min, int max) {
   std::random_device rd;
@@ -27,13 +28,12 @@ int main() {
 
   Rectangle boundary =
       Rectangle(sf::Vector2f(windowSize.x / 2, windowSize.y / 2), windowSize);
-  QuadTree tree = QuadTree(boundary, 4);
 
-  for (int i = 0; i < 100; i++) {
+  for (int i = 0; i < N_PARTICLES; i++) {
     float posX = genRandomInt(0, windowSize.x);
     float posY = genRandomInt(0, windowSize.y);
     particles.push_back(sf::Vector2f(posX, posY));
-    bool inserted = tree.insert(particles[i]);
+    // tree.insert(particles[i]);
   }
 
   sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "SFML");
@@ -49,11 +49,24 @@ int main() {
       }
     }
 
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+      float offsetX = genRandomInt(-10, 10);
+      float offsetY = genRandomInt(-10, 10);
+      sf::Vector2i mousePos =
+          sf::Mouse::getPosition(window);  // Get the current mouse position
+      float mouseX = static_cast<float>(mousePos.x) + offsetX;
+      float mouseY = static_cast<float>(mousePos.y) + offsetY;
+      particles.push_back(Particle(sf::Vector2f(mouseX, mouseY)));
+    }
+
+    QuadTree tree = QuadTree(boundary, 4);
+
     window.clear(bgColor);
 
     for (int i = 0; i < particles.size(); i++) {
       particles[i].update();
       particles[i].draw(window);
+      tree.insert(particles[i]);
     }
 
     tree.draw(window);
