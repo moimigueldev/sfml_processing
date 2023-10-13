@@ -4,6 +4,7 @@
 #include "Circle.hpp"
 #include "EventUtils.hpp"
 #include "Particle.hpp"
+#include "ParticleManager.hpp"
 #include "QuadTree.hpp"
 #include "Rectangle.hpp"
 #include "Utility.hpp"
@@ -19,6 +20,7 @@ static int frameCount = 0;
 
 int main() {
   sf::Clock clock;
+
   std::vector<Particle> particles =
       Particle::initialize(N_PARTICLES, windowSize);
 
@@ -27,7 +29,9 @@ int main() {
 
   sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y),
                           "QuadTree");
+
   window.setFramerateLimit(FRAMERATE);
+
   Utility::FPSCounter fpsCounter;
 
   // Main Loop
@@ -42,42 +46,9 @@ int main() {
 
     window.clear(bgColor);
 
-    for (int i = 0; i < particles.size(); i++) {
-      particles[i].update();
-      particles[i].draw(window);
-      tree.insert(particles[i]);
-      if (particles[i].highlight) {
-        particles[i].highlight = false;
-      }
-    }
-
-    for (int i = 0; i < particles.size(); i++) {
-      Circle range =
-          Circle(particles[i].shape.getPosition(), particles[i].RADIUS * 2);
-
-      std::vector<std::reference_wrapper<Particle> > found;
-
-      tree.query(range, particles[i], found);
-
-      for (int i = 0; i < found.size(); i++) {
-        // std::cout << found[i].get().cords.x << std::endl;
-        found[i].get().highlight = true;
-      }
-
-      // range.draw(window);
-    }
-
-    // for (int i = 0; i < particles.size(); i++) {
-    //   for (int j = i + 1; j < particles.size(); j++) {
-    //     // For simplicity, let's assume Particle has a method called
-    //     // `intersects` that checks if two particles are touching or
-    //     // overlapping.
-    //     if (particles[i].intersects(particles[j])) {
-    //       particles[i].highlight = true;
-    //       particles[j].highlight = true;
-    //     }
-    //   }
-    // }
+    ParticleManager::updateAndDrawParticles(particles, window, tree);
+    ParticleManager::updateParticleIntersections(particles, tree);
+    // ParticleManager::updateBruteForceCollisions(particles);
 
     // tree.draw(window);
 
