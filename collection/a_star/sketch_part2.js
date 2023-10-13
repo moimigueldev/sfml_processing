@@ -30,7 +30,7 @@ function Spot(i, j) {
 
   this.wall = false;
 
-  if (random(1) < 0.34) {
+  if (random(1) < 0.24) {
     this.wall = true;
   }
 
@@ -45,13 +45,12 @@ function Spot(i, j) {
   this.neighbors = [];
 
   this.show = function (color) {
-    // fill(color);
+    fill(color);
     if (this.wall) {
       fill(0);
-      noStroke();
-      // rect(this.i * w, this.j * h, w - 1, h - 1);
-      ellipse(this.i * w + w / 2, this.j * h + h / 2, w / 2, h / 2);
     }
+    noStroke();
+    rect(this.i * w, this.j * h, w - 1, h - 1);
   };
 
   this.addNeighbors = function (grid) {
@@ -123,7 +122,7 @@ function setup() {
 }
 
 function draw() {
-  background(255);
+  background(0);
 
   if (openSet.length > 0) {
     // we can keep going
@@ -202,16 +201,8 @@ function draw() {
     temp = temp.previous;
   }
 
-  beginShape();
-
-  noFill();
-  stroke(0, 255, 255);
-  strokeWeight(w / 2);
   for (let i = 0; i < path.length; i++) {
-    vertex(path[i].i * w + w / 2, path[i].j * h + h / 2);
+    path[i].show(color(0, 0, 255));
   }
-
-  endShape();
-
   // noLoop();
 }

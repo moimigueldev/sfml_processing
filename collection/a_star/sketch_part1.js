@@ -1,5 +1,5 @@
-const cols = 50;
-const rows = 50;
+const cols = 25;
+const rows = 25;
 const grid = new Array(cols);
 
 const openSet = [];
@@ -8,31 +8,24 @@ let start;
 let end;
 let path = [];
 let current;
-let noSolution = false;
 
 let w, h;
 
-function heuristic(a, b) {
-  const d = dist(a.i, a.j, b.i, b.j);
-  return d;
-}
-
 // function heuristic(a, b) {
-//   var d = abs(a.i - b.i) + abs(a.j, b.j);
+//   const d = dist(a.i, a.j, b.i, b.j);
 //   return d;
 // }
+
+function heuristic(a, b) {
+  var d = abs(a.i - b.i) + abs(a.j, b.j);
+  return d;
+}
 
 function Spot(i, j) {
   this.i = i;
   this.j = j;
 
   this.previous = undefined;
-
-  this.wall = false;
-
-  if (random(1) < 0.34) {
-    this.wall = true;
-  }
 
   // cost of g + h
   this.f = 0;
@@ -45,13 +38,9 @@ function Spot(i, j) {
   this.neighbors = [];
 
   this.show = function (color) {
-    // fill(color);
-    if (this.wall) {
-      fill(0);
-      noStroke();
-      // rect(this.i * w, this.j * h, w - 1, h - 1);
-      ellipse(this.i * w + w / 2, this.j * h + h / 2, w / 2, h / 2);
-    }
+    fill(color);
+    noStroke();
+    rect(this.i * w, this.j * h, w - 1, h - 1);
   };
 
   this.addNeighbors = function (grid) {
@@ -69,19 +58,6 @@ function Spot(i, j) {
     }
     if (j > 0) {
       this.neighbors.push(grid[i][j - 1]);
-    }
-
-    if (i > 0 && j > 0) {
-      this.neighbors.push(grid[i - 1][j - 1]);
-    }
-    if (i < cols - 1 && j > 0) {
-      this.neighbors.push(grid[i + 1][j - 1]);
-    }
-    if (i > 0 && j < rows - 1) {
-      this.neighbors.push(grid[i - 1][j + 1]);
-    }
-    if (i < cols - 1 && j < rows - 1) {
-      this.neighbors.push(grid[i + 1][j + 1]);
     }
   };
 }
@@ -116,14 +92,12 @@ function setup() {
 
   start = grid[0][0];
   end = grid[cols - 1][rows - 1];
-  start.wall = false;
-  end.wall = false;
 
   openSet.push(start);
 }
 
 function draw() {
-  background(255);
+  background(0);
 
   if (openSet.length > 0) {
     // we can keep going
@@ -144,25 +118,21 @@ function draw() {
     for (let i = 0; i < neighbors.length; i++) {
       const neighbor = neighbors[i];
 
-      if (!closedSet.includes(neighbor) && !neighbor.wall) {
+      if (!closedSet.includes(neighbor)) {
         const tempG = current.g + 1;
-        let newPath = false;
         if (openSet.includes(neighbor)) {
           if (tempG < neighbor.g) {
             neighbor.g = tempG;
-            newPath = true;
           }
         } else {
           neighbor.g = tempG;
           openSet.push(neighbor);
-          newPath = true;
         }
-        if (newPath) {
-          neighbor.h = heuristic(neighbor, end);
-          neighbor.f = neighbor.g + neighbor.h;
-          // previous === camefrom
-          neighbor.previous = current;
-        }
+
+        neighbor.h = heuristic(neighbor, end);
+        neighbor.f = neighbor.g + neighbor.h;
+        // previous === camefrom
+        neighbor.previous = current;
       }
     }
 
@@ -174,9 +144,6 @@ function draw() {
     }
   } else {
     // no solution
-    noLoop();
-    console.log("no solution");
-    return;
   }
 
   for (let i = 0; i < cols; i++) {
@@ -202,16 +169,8 @@ function draw() {
     temp = temp.previous;
   }
 
-  beginShape();
-
-  noFill();
-  stroke(0, 255, 255);
-  strokeWeight(w / 2);
   for (let i = 0; i < path.length; i++) {
-    vertex(path[i].i * w + w / 2, path[i].j * h + h / 2);
+    path[i].show(color(0, 0, 255));
   }
-
-  endShape();
-
   // noLoop();
 }
