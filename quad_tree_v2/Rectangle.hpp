@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+#include "Circle.hpp"
 #include "Particle.hpp"
 
 class Rectangle {
@@ -33,9 +34,31 @@ class Rectangle {
             point.cords.y < pos.y + size.y / 2);
   }
 
+  bool intersects(const Circle& circle) const {
+    float closestX = circle.shape.getPosition().x;
+    float closestY = circle.shape.getPosition().y;
+
+    if (closestX < shape.getPosition().x - shape.getSize().x / 2)
+      closestX = shape.getPosition().x - shape.getSize().x / 2;
+    else if (closestX > shape.getPosition().x + shape.getSize().x / 2)
+      closestX = shape.getPosition().x + shape.getSize().x / 2;
+
+    if (closestY < shape.getPosition().y - shape.getSize().y / 2)
+      closestY = shape.getPosition().y - shape.getSize().y / 2;
+    else if (closestY > shape.getPosition().y + shape.getSize().y / 2)
+      closestY = shape.getPosition().y + shape.getSize().y / 2;
+
+    float distanceX = circle.shape.getPosition().x - closestX;
+    float distanceY = circle.shape.getPosition().y - closestY;
+
+    float distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+
+    return distanceSquared < (circle.radius * circle.radius);
+  }
+
   void draw(sf::RenderWindow& window) {
     window.draw(shape);
-    window.draw(centerPoint);
+    // window.draw(centerPoint);
   }
 };
 

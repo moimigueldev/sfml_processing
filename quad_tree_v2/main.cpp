@@ -2,14 +2,16 @@
 #include <iostream>
 #include <random>
 
+#include "Circle.hpp"
 #include "Particle.hpp"
 #include "QuadTree.hpp"
 #include "Rectangle.hpp"
 
 sf::Vector2f windowSize = sf::Vector2f(1000.0f, 800.0f);
+// sf::Vector2f windowSize = sf::Vector2f(100.0f, 50.0f);
 sf::Color bgColor = sf::Color(0, 0, 0);
 const int FRAMERATE = 60;
-const int N_PARTICLES = 0;
+const int N_PARTICLES = 200;
 
 int genRandomInt(int min, int max) {
   std::random_device rd;
@@ -68,6 +70,25 @@ int main() {
       particles[i].update();
       particles[i].draw(window);
       tree.insert(particles[i]);
+      particles[i].highlight = false;
+    }
+
+    for (int i = 0; i < particles.size(); i++) {
+      Circle range =
+          Circle(particles[i].shape.getPosition(), particles[i].RADIUS * 2);
+
+      Particle& checking = particles[i];
+
+      std::vector<std::reference_wrapper<Particle> > found;
+
+      tree.query(range, particles[i], found);
+
+      for (int i = 0; i < found.size(); i++) {
+        std::cout << found[i].get().cords.x << std::endl;
+        found[i].get().highlight = true;
+      }
+
+      // range.draw(window);
     }
 
     tree.draw(window);

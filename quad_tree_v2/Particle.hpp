@@ -12,15 +12,15 @@ int randInt(int min, int max) {
 
 class Particle {
  private:
-  sf::CircleShape shape;
-
  public:
-  int RADIUS = 2;
+  sf::CircleShape shape;
+  int RADIUS = 8;
   sf::Vector2f cords;
+  bool highlight = false;
   Particle(sf::Vector2f pos) {
     shape.setRadius(RADIUS);
     shape.setPosition(pos);
-    shape.setOutlineThickness(2);
+    shape.setOutlineThickness(1);
     shape.setOutlineColor(sf::Color::White);
     shape.setFillColor(sf::Color::Transparent);
 
@@ -28,8 +28,8 @@ class Particle {
   }
 
   void update() {
-    float randX = randInt(-3, 3);
-    float randY = randInt(-3, 3);
+    float randX = randInt(-1, 1);
+    float randY = randInt(-1, 1);
     shape.move(randX, randY);
 
     updateCords();
@@ -40,6 +40,14 @@ class Particle {
     cords.y = shape.getPosition().y;
   }
 
-  void draw(sf::RenderWindow& window) { window.draw(shape); }
+  void draw(sf::RenderWindow& window) {
+    if (highlight) {
+      shape.setFillColor(sf::Color::Red);
+    } else {
+      shape.setFillColor(sf::Color::Transparent);
+    }
+
+    window.draw(shape);
+  }
 };
 

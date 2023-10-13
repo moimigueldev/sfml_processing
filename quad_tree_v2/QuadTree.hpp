@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+#include "Circle.hpp"
 #include "Particle.hpp"
 #include "Rectangle.hpp"
 
@@ -71,6 +72,27 @@ class QuadTree {
     delete northeast;
     delete southwest;
     delete southeast;
+  }
+
+  void query(const Circle& range, Particle& centerParticle,
+             std::vector<std::reference_wrapper<Particle> >& found) const {
+    if (!boundary.intersects(range)) {
+      return;
+    }
+
+    for (const auto& particleRef : particles) {
+      Particle& particle = particleRef.get();
+      if (&particle != &centerParticle && range.contains(particle)) {
+        found.push_back(particleRef);
+      }
+    }
+
+    if (divided) {
+      northwest->query(range, centerParticle, found);
+      northeast->query(range, centerParticle, found);
+      southwest->query(range, centerParticle, found);
+      southeast->query(range, centerParticle, found);
+    }
   }
 
   void draw(sf::RenderWindow& window) {
