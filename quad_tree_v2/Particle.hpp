@@ -40,6 +40,14 @@ class Particle {
     cords.y = shape.getPosition().y;
   }
 
+  bool intersects(const Particle& other) const {
+    float dx = cords.x - other.cords.x;
+    float dy = cords.y - other.cords.y;
+    float distance = std::sqrt(dx * dx + dy * dy);
+
+    return distance < (RADIUS + other.RADIUS);
+  }
+
   void draw(sf::RenderWindow& window) {
     if (highlight) {
       shape.setFillColor(sf::Color::Red);
