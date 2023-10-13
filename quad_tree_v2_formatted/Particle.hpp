@@ -1,14 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include <random>
 
-int randInt(int min, int max) {
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  std::uniform_int_distribution<> distrib(min, max);
-  return distrib(gen);
-}
+#include "Utility.hpp"
 
 class Particle {
  private:
@@ -28,8 +22,8 @@ class Particle {
   }
 
   void update() {
-    float randX = randInt(-1, 1);
-    float randY = randInt(-1, 1);
+    float randX = Utility::genRandomInt(-1, 1);
+    float randY = Utility::genRandomInt(-1, 1);
     shape.move(randX, randY);
 
     updateCords();
@@ -56,6 +50,17 @@ class Particle {
     }
 
     window.draw(shape);
+  }
+
+  static std::vector<Particle> initialize(int nParticles,
+                                          const sf::Vector2f& windowSize) {
+    std::vector<Particle> particles;
+    for (int i = 0; i < nParticles; i++) {
+      float posX = Utility::genRandomInt(0, windowSize.x);
+      float posY = Utility::genRandomInt(0, windowSize.y);
+      particles.push_back(Particle(sf::Vector2f(posX, posY)));
+    }
+    return particles;
   }
 };
 
