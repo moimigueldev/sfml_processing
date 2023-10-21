@@ -21,6 +21,9 @@ int main() {
     WindowUtility::handleCloseEvent(window);
     window.clear(WindowUtility::bgColor);
     grid.draw(window);
+
+    game.draw(window);
+
     window.display();
   }
 

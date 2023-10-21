@@ -7,8 +7,8 @@
 
 class Game {
  private:
-  std::vector<std::unique_ptr<Cell> > openSet;
-  std::vector<std::unique_ptr<Cell> > closedSet;
+  std::vector<Cell*> openSet;
+  std::vector<Cell*> closedSet;
   Cell* start;
   Cell* end;
   Grid& grid;
@@ -20,8 +20,14 @@ class Game {
 
     start->setAsStartingCell();
     end->setAsEndingCell();
+    openSet.push_back(start);
   }
 
-  void draw(sf::RenderWindow& window) {}
+  void draw(sf::RenderWindow& window) {
+    // for (int i = 0; i < openSet.size(); i++) {
+    //   openSet[i]->draw()
+    //
+    // }
+  }
 };
 
