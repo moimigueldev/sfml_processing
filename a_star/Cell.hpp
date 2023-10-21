@@ -2,14 +2,22 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+#include "utility.hpp"
+
 class Cell {
  private:
   int i;
   int j;
   sf::RectangleShape shape;
   sf::CircleShape center;
+  int g = 0;
+  int h = 0;
+  int f = 0;
 
  public:
+  bool startingCell = false;
+  bool endingCell = false;
+  bool wall = false;
   Cell() = default;
   Cell(float i_pos, float j_pos, sf::Vector2f dims) {
     i = i_pos;
@@ -26,6 +34,27 @@ class Cell {
     center.setOrigin(5, 5);
     center.setFillColor(sf::Color::Red);
     center.setPosition(shape.getPosition().x, shape.getPosition().y);
+
+    setupWall();
+  }
+
+  void setAsStartingCell() {
+    startingCell = true;
+    wall = false;
+    shape.setFillColor(sf::Color::Transparent);
+  }
+
+  void setAsEndingCell() {
+    endingCell = true;
+    wall = false;
+    shape.setFillColor(sf::Color::Transparent);
+  }
+
+  void setupWall() {
+    float randomFloat = Utility::genRandomFloat(0, 1.0f);
+    if (randomFloat < 0.3f) {
+      shape.setFillColor(sf::Color::Black);
+    }
   }
 
   void draw(sf::RenderWindow& window) {

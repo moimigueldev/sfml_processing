@@ -6,14 +6,16 @@
 
 class Grid {
  private:
-  const int COLS = 25;
-  const int ROWS = 25;
   float w;
   float h;
-  std::vector<std::vector<Cell> > grid;
   sf::Vector2f windowDims;
 
  public:
+  const int COLS = 5;
+  const int ROWS = 5;
+
+  std::vector<std::vector<Cell> > grid;
+
   Grid(sf::Vector2f windowSize) {
     windowDims = windowSize;
     w = windowDims.x / COLS;
@@ -34,6 +36,8 @@ class Grid {
       }
     }
   }
+
+  Cell& getCell(int col, int row) { return grid[col][row]; }
 
   void draw(sf::RenderWindow& window) {
     for (int i = 0; i < COLS; i++) {
