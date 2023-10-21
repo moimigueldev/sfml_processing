@@ -9,6 +9,8 @@ let end;
 let path = [];
 let current;
 let noSolution = false;
+let startGame = false;
+let centers = [];
 
 let w, h;
 
@@ -18,7 +20,7 @@ function heuristic(a, b) {
 }
 
 // function heuristic(a, b) {
-//   var d = abs(a.i - b.i) + abs(a.j, b.j);
+//   var d = abs(a.i - b.i) + abs(a.j - b.j);
 //   return d;
 // }
 
@@ -30,9 +32,9 @@ function Spot(i, j) {
 
   this.wall = false;
 
-  if (random(1) < 0.34) {
-    this.wall = true;
-  }
+  // if (random(1) < 0.3) {
+  //   this.wall = true;
+  // }
 
   // cost of g + h
   this.f = 0;
@@ -45,13 +47,12 @@ function Spot(i, j) {
   this.neighbors = [];
 
   this.show = function (color) {
-    // fill(color);
+    fill(color);
     if (this.wall) {
       fill(0);
-      noStroke();
-      // rect(this.i * w, this.j * h, w - 1, h - 1);
-      ellipse(this.i * w + w / 2, this.j * h + h / 2, w / 2, h / 2);
     }
+    noStroke();
+    rect(this.i * w, this.j * h, w - 1, h - 1);
   };
 
   this.addNeighbors = function (grid) {
@@ -95,7 +96,8 @@ function removeFromArray(arr, element) {
 }
 
 function setup() {
-  createCanvas(400, 400);
+  console.log(windowWidth);
+  createCanvas(windowWidth, windowHeight);
   w = width / cols;
   h = height / rows;
 
@@ -123,60 +125,66 @@ function setup() {
 }
 
 function draw() {
-  background(255);
+  background(0);
 
-  if (openSet.length > 0) {
-    // we can keep going
-    let winner = 0;
-    for (let i = 0; i < openSet.length; i++) {
-      if (openSet[i].f < openSet[winner].f) {
-        winner = i;
+  if (mouseIsPressed) {
+    checkMousePressed();
+  }
+
+  if (startGame) {
+    if (openSet.length > 0) {
+      // we can keep going
+      let winner = 0;
+      for (let i = 0; i < openSet.length; i++) {
+        if (openSet[i].f < openSet[winner].f) {
+          winner = i;
+        }
       }
-    }
 
-    current = openSet[winner];
+      current = openSet[winner];
 
-    removeFromArray(openSet, current);
-    closedSet.push(current);
+      removeFromArray(openSet, current);
+      closedSet.push(current);
 
-    const neighbors = current.neighbors;
+      const neighbors = current.neighbors;
 
-    for (let i = 0; i < neighbors.length; i++) {
-      const neighbor = neighbors[i];
+      for (let i = 0; i < neighbors.length; i++) {
+        const neighbor = neighbors[i];
 
-      if (!closedSet.includes(neighbor) && !neighbor.wall) {
-        const tempG = current.g + 1;
-        let newPath = false;
-        if (openSet.includes(neighbor)) {
-          if (tempG < neighbor.g) {
+        if (!closedSet.includes(neighbor) && !neighbor.wall) {
+          const tempG = current.g + 1;
+          let newPath = false;
+          if (openSet.includes(neighbor)) {
+            if (tempG < neighbor.g) {
+              neighbor.g = tempG;
+              newPath = true;
+            }
+          } else {
             neighbor.g = tempG;
+            openSet.push(neighbor);
             newPath = true;
           }
-        } else {
-          neighbor.g = tempG;
-          openSet.push(neighbor);
-          newPath = true;
-        }
-        if (newPath) {
-          neighbor.h = heuristic(neighbor, end);
-          neighbor.f = neighbor.g + neighbor.h;
-          // previous === camefrom
-          neighbor.previous = current;
+          if (newPath) {
+            neighbor.h = heuristic(neighbor, end);
+            neighbor.f = neighbor.g + neighbor.h;
+            // previous === camefrom
+            neighbor.previous = current;
+          }
         }
       }
-    }
 
-    if (current == end) {
-      console.log("DONE");
+      if (current == end) {
+        console.log("DONE");
+        noLoop();
+
+        // find the path
+      }
+    } else {
+      // no solution
       noLoop();
-
-      // find the path
+      console.log("no solution");
+      return;
     }
-  } else {
-    // no solution
-    noLoop();
-    console.log("no solution");
-    return;
   }
 
   for (let i = 0; i < cols; i++) {
@@ -194,24 +202,48 @@ function draw() {
     openSet[i].show(color(0, 255, 0));
   }
 
-  path = [];
-  let temp = current;
-  path.push(temp);
-  while (temp.previous) {
-    path.push(temp.previous);
-    temp = temp.previous;
+  if (startGame) {
+    path = [];
+    let temp = current;
+    path.push(temp);
+    while (temp.previous) {
+      path.push(temp.previous);
+      temp = temp.previous;
+    }
+
+    for (let i = 0; i < path.length; i++) {
+      path[i].show(color(0, 0, 255));
+    }
   }
 
-  beginShape();
-
-  noFill();
-  stroke(0, 255, 255);
-  strokeWeight(w / 2);
-  for (let i = 0; i < path.length; i++) {
-    vertex(path[i].i * w + w / 2, path[i].j * h + h / 2);
+  for (let i = 0; i < centers.length; i++) {
+    fill(255, 0, 0);
+    circle(centers[i].x, centers[i].y, 10);
   }
-
-  endShape();
-
   // noLoop();
+}
+
+function checkMousePressed() {
+  centers.length = 0;
+  for (let i = 0; i < grid.length; i++) {
+    for (let j = 0; j < grid[i].length; j++) {
+      const cell = grid[i][j];
+      const startingPos = createVector(cell.i * w, cell.j * h);
+      const center = createVector(startingPos.x + w / 2, startingPos.y + h / 2);
+      if (
+        mouseX > center.x - w / 2 &&
+        mouseX < center.x + w / 2 &&
+        mouseY > center.y - h / 2 &&
+        mouseY < center.y + h / 2
+      ) {
+        cell.wall = true;
+      }
+    }
+  }
+}
+
+function keyPressed() {
+  if (key === "s" || key === "S") {
+    startGame = true;
+  }
 }
