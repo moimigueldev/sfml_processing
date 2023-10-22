@@ -7,10 +7,16 @@
 #include "Grid.hpp"
 #include "utility.hpp"
 
+// float heuristic(const sf::Vector2f& a, const sf::Vector2f& b) {
+//   float dx = b.x - a.x;
+//   float dy = b.y - a.y;
+//   return std::sqrt(dx * dx + dy * dy);
+// }
+
 float heuristic(const sf::Vector2f& a, const sf::Vector2f& b) {
-  float dx = b.x - a.x;
-  float dy = b.y - a.y;
-  return std::sqrt(dx * dx + dy * dy);
+  float dx = std::abs(b.x - a.x);
+  float dy = std::abs(b.y - a.y);
+  return std::max(dx, dy);
 }
 
 class Game {
@@ -40,7 +46,7 @@ class Game {
         int winner = 0;
 
         for (int i = 0; i < openSet.size(); i++) {
-          if (openSet[winner]->f < openSet[i]->f) {
+          if (openSet[i]->f < openSet[winner]->f) {
             winner = i;
           }
         }
@@ -89,7 +95,8 @@ class Game {
         }
 
       } else {
-        // Utility::message("Done");
+        Utility::message("Done");
+        gameEnd = true;
       }
     }
   }
