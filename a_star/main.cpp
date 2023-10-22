@@ -24,10 +24,9 @@ int main() {
 
     grid.draw(window);
 
-    // game.run();
-    //
-    // game.drawOpenSet(window);
-    // game.drawClosedSet(window);
+    game.run();
+    game.drawOpenSet(window);
+    game.drawClosedSet(window);
 
     window.display();
   }

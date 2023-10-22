@@ -11,8 +11,8 @@ class Grid {
   sf::Vector2f windowDims;
 
  public:
-  const int COLS = 5;
-  const int ROWS = 5;
+  const int COLS = 25;
+  const int ROWS = 25;
 
   std::vector<std::vector<Cell> > grid;
 

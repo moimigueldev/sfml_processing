@@ -6,12 +6,13 @@
 #include "utility.hpp"
 class Cell {
  private:
-  int i;
-  int j;
   sf::RectangleShape shape;
   sf::CircleShape center;
 
  public:
+  int i;
+  int j;
+  Cell* previous = nullptr;
   int g = 0;
   int h = 0;
   int f = 0;
@@ -85,6 +86,8 @@ class Cell {
     }
   }
 
+  void setPrevious(Cell* prev) { previous = prev; }
+
   void setAsStartingCell() {
     startingCell = true;
     wall = false;
@@ -101,6 +104,7 @@ class Cell {
     float randomFloat = Utility::genRandomFloat(0, 1.0f);
     if (randomFloat < 0.3f) {
       shape.setFillColor(sf::Color::Black);
+      wall = true;
     }
   }
 
