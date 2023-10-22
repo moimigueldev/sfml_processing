@@ -22,6 +22,12 @@ class Grid {
     h = windowDims.y / ROWS;
 
     setupGrid(windowSize);
+
+    for (int i = 0; i < COLS; i++) {
+      for (int j = 0; j < ROWS; j++) {
+        grid[i][j].setupNeighbors(sf::Vector2i(COLS, ROWS), *this);
+      }
+    }
   }
 
   void setupGrid(sf::Vector2f& windowSize) {

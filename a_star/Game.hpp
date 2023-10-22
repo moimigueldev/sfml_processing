@@ -4,6 +4,7 @@
 
 #include "Cell.hpp"
 #include "Grid.hpp"
+#include "utility.hpp"
 
 class Game {
  private:
@@ -23,11 +24,35 @@ class Game {
     openSet.push_back(start);
   }
 
-  void draw(sf::RenderWindow& window) {
-    // for (int i = 0; i < openSet.size(); i++) {
-    //   openSet[i]->draw()
-    //
-    // }
+  void run() {
+    if (openSet.size()) {
+      int winner = 0;
+      for (int i = 0; i < openSet.size(); i++) {
+        if (openSet[winner]->f < openSet[i]->f) {
+          winner = i;
+        }
+
+        Cell* current = openSet[winner];
+
+        openSet.erase(openSet.begin() + winner);
+        closedSet.push_back(current);
+      }
+
+    } else {
+      Utility::message("Done");
+    }
+  }
+
+  void drawOpenSet(sf::RenderWindow& window) {
+    for (int i = 0; i < openSet.size(); i++) {
+      openSet[i]->draw(window, sf::Color::Green);
+    }
+  }
+
+  void drawClosedSet(sf::RenderWindow& window) {
+    for (int i = 0; i < closedSet.size(); i++) {
+      closedSet[i]->draw(window, sf::Color::Red);
+    }
   }
 };
 

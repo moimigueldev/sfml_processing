@@ -2,21 +2,22 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+// #include "Grid.hpp"
 #include "utility.hpp"
-
 class Cell {
  private:
   int i;
   int j;
   sf::RectangleShape shape;
   sf::CircleShape center;
+
+ public:
   int g = 0;
   int h = 0;
   int f = 0;
-
- public:
   bool startingCell = false;
   bool endingCell = false;
+  std::vector<Cell*> neighbors;
   bool wall = false;
   Cell() = default;
   Cell(float i_pos, float j_pos, sf::Vector2f dims) {
@@ -36,6 +37,52 @@ class Cell {
     center.setPosition(shape.getPosition().x, shape.getPosition().y);
 
     setupWall();
+  }
+
+  template <typename T>
+  void setupNeighbors(sf::Vector2i colsRows, T& grid) {
+    int cols = colsRows.x;
+    int rows = colsRows.y;
+
+    // Top
+    if (j > 0) {
+      neighbors.push_back(&grid.getCell(i, j - 1));
+    }
+
+    // Right
+    if (i < cols - 1) {
+      neighbors.push_back(&grid.getCell(i + 1, j));
+    }
+
+    // Bottom
+    if (j < rows - 1) {
+      neighbors.push_back(&grid.getCell(i, j + 1));
+    }
+
+    // Left
+    if (i > 0) {
+      neighbors.push_back(&grid.getCell(i - 1, j));
+    }
+
+    // Top Right
+    if (j > 0 && i < cols - 1) {
+      neighbors.push_back(&grid.getCell(i + 1, j - 1));
+    }
+
+    // Bottom Right
+    if (j < rows - 1 && i < cols - 1) {
+      neighbors.push_back(&grid.getCell(i + 1, j + 1));
+    }
+
+    // Top Left
+    if (j > 0 && i > 0) {
+      neighbors.push_back(&grid.getCell(i - 1, j - 1));
+    }
+
+    // Bottom Left
+    if (j < rows - 1 && i > 0) {
+      neighbors.push_back(&grid.getCell(i - 1, j + 1));
+    }
   }
 
   void setAsStartingCell() {
@@ -58,6 +105,11 @@ class Cell {
   }
 
   void draw(sf::RenderWindow& window) {
+    window.draw(shape);
+    // window.draw(center);
+  }
+  void draw(sf::RenderWindow& window, sf::Color color) {
+    shape.setFillColor(color);
     window.draw(shape);
     // window.draw(center);
   }

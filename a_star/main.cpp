@@ -19,10 +19,15 @@ int main() {
   // Main Loop
   while (window.isOpen()) {
     WindowUtility::handleCloseEvent(window);
+
     window.clear(WindowUtility::bgColor);
+
     grid.draw(window);
 
-    game.draw(window);
+    // game.run();
+    //
+    // game.drawOpenSet(window);
+    // game.drawClosedSet(window);
 
     window.display();
   }
