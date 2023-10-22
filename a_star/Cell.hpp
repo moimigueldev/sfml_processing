@@ -37,7 +37,7 @@ class Cell {
     center.setFillColor(sf::Color::Red);
     center.setPosition(shape.getPosition().x, shape.getPosition().y);
 
-    setupWall();
+    // setupWall();
   }
 
   template <typename T>

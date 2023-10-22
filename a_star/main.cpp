@@ -27,6 +27,7 @@ int main() {
     game.run();
     game.drawOpenSet(window);
     game.drawClosedSet(window);
+    game.drawPath(window);
 
     window.display();
   }
