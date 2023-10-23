@@ -103,38 +103,58 @@ class Game {
 
   void drawOpenSet(sf::RenderWindow& window) {
     for (int i = 0; i < openSet.size(); i++) {
-      openSet[i]->draw(window, sf::Color::Green);
+      openSet[i]->draw(window, sf::Color(6, 214, 160, 50));
     }
   }
 
   void drawClosedSet(sf::RenderWindow& window) {
     for (int i = 0; i < closedSet.size(); i++) {
-      closedSet[i]->draw(window, sf::Color::Red);
+      closedSet[i]->draw(window, sf::Color(239, 71, 111));
+    }
+  }
+
+  // void resetColors(sf::RenderWindow& window) {
+  //   for (int i = 0; i < grid.COLS; ++i) {
+  //     for (int j = 0; j < grid.ROWS; ++j) {
+  //       Cell& cell = grid.getCell(i, j);
+  //       if (!cell.startingCell && !cell.endingCell && !cell.wall) {
+  //         cell.draw(
+  //             window);  // This will reset to the default transparent color
+  //       }
+  //     }
+  //   }
+  // }
+
+  void resetColors(sf::RenderWindow& window) {
+    for (int i = 0; i < grid.COLS; ++i) {
+      for (int j = 0; j < grid.ROWS; ++j) {
+        Cell& cell = grid.getCell(i, j);
+        if (!cell.startingCell && !cell.endingCell && !cell.wall) {
+          cell.draw(
+              window);  // This will reset to the default transparent color
+        }
+      }
+    }
+
+    // Reset colors for the closedSet
+    for (Cell* cell : closedSet) {
+      cell->draw(window);  // Reset to the default transparent color
     }
   }
 
   void drawPath(sf::RenderWindow& window) {
-    //     path = [];
-    // let temp = current;
-    // path.push(temp);
-    // while (temp.previous) {
-    //   path.push(temp.previous);
-    //   temp = temp.previous;
-    // }
-    //
-    // for (let i = 0; i < path.length; i++) {
-    //   path[i].show(color(0, 0, 255));
-    // }
-    path.clear();
-    Cell* temp = current;
-    path.push_back(temp);
-    while (temp->previous != nullptr) {
-      path.push_back(temp->previous);
-      temp = temp->previous;
-    }
+    if (true) {
+      path.clear();
+      Cell* temp = current;
+      path.push_back(temp);
+      while (temp->previous != nullptr) {
+        path.push_back(temp->previous);
+        temp = temp->previous;
+      }
 
-    for (int i = 0; i < path.size(); i++) {
-      path[i]->draw(window, sf::Color(200, 0, 150));
+      for (int i = 0; i < path.size(); i++) {
+        path[i]->draw(window, sf::Color(255, 209, 102));
+      }
     }
   }
 };

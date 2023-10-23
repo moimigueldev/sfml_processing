@@ -25,8 +25,9 @@ int main() {
     grid.draw(window);
 
     game.run();
-    game.drawOpenSet(window);
-    game.drawClosedSet(window);
+    game.resetColors(window);
+    // game.drawOpenSet(window);
+    // game.drawClosedSet(window);
     game.drawPath(window);
 
     window.display();

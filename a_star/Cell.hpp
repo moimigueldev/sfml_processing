@@ -30,14 +30,14 @@ class Cell {
     // shape.setSize(sf::Vector2f(dims.x - 1, dims.y - 1));
     shape.setFillColor(sf::Color::Transparent);
     shape.setOutlineThickness(1);
-    shape.setOutlineColor(sf::Color::White);
+    shape.setOutlineColor(sf::Color(255, 255, 255, 100));
 
     center.setRadius(5);
     center.setOrigin(5, 5);
     center.setFillColor(sf::Color::Red);
     center.setPosition(shape.getPosition().x, shape.getPosition().y);
 
-    // setupWall();
+    setupWall();
   }
 
   template <typename T>
@@ -102,8 +102,8 @@ class Cell {
 
   void setupWall() {
     float randomFloat = Utility::genRandomFloat(0, 1.0f);
-    if (randomFloat < 0.3f) {
-      shape.setFillColor(sf::Color::Black);
+    if (randomFloat < 0.25f) {
+      shape.setFillColor(sf::Color(0, 0, 0, 100));
       wall = true;
     }
   }

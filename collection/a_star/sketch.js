@@ -1,6 +1,7 @@
-const cols = 50;
-const rows = 50;
+const cols = 20;
+const rows = 20;
 const grid = new Array(cols);
+// console.log("hello");
 
 const openSet = [];
 const closedSet = [];
@@ -32,9 +33,9 @@ function Spot(i, j) {
 
   this.wall = false;
 
-  // if (random(1) < 0.3) {
-  //   this.wall = true;
-  // }
+  if (random(1) < 0.3) {
+    this.wall = true;
+  }
 
   // cost of g + h
   this.f = 0;
@@ -97,7 +98,7 @@ function removeFromArray(arr, element) {
 
 function setup() {
   console.log(windowWidth);
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(1000, 800);
   w = width / cols;
   h = height / rows;
 
@@ -193,14 +194,14 @@ function draw() {
     }
   }
 
-  for (let i = 0; i < closedSet.length; i++) {
-    // closedSet red
-    closedSet[i].show(color(255, 0, 0));
-  }
-  for (let i = 0; i < openSet.length; i++) {
-    // openSet green
-    openSet[i].show(color(0, 255, 0));
-  }
+  // for (let i = 0; i < closedSet.length; i++) {
+  //   // closedSet red
+  //   closedSet[i].show(color(255, 0, 0));
+  // }
+  // for (let i = 0; i < openSet.length; i++) {
+  //   // openSet green
+  //   openSet[i].show(color(0, 255, 0));
+  // }
 
   if (startGame) {
     path = [];
