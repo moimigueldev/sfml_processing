@@ -18,7 +18,7 @@ int main() {
 
   // Main Loop
   while (window.isOpen()) {
-    WindowUtility::handleCloseEvent(window, game);
+    WindowUtility::handleCloseEvent(window, game, grid);
 
     window.clear(WindowUtility::bgColor);
 
@@ -26,8 +26,8 @@ int main() {
 
     game.run();
     // game.resetColors(window);
-    game.drawOpenSet(window);
-    game.drawClosedSet(window);
+    // game.drawOpenSet(window);
+    // game.drawClosedSet(window);
     game.drawPath(window);
 
     window.display();
