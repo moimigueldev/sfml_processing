@@ -70,7 +70,16 @@ class Game {
             // check if closedSet does not include neighbor
             if (!neighbor->wall && std::find(closedSet.begin(), closedSet.end(),
                                              neighbor) == closedSet.end()) {
-              int tempG = neighbor->g + 1;
+              int tempGVal;
+              if (std::abs(current->i - neighbor->i) +
+                      std::abs(current->j - neighbor->j) ==
+                  2) {
+                tempGVal = sqrt(2);
+              } else {
+                tempGVal = 1;
+              }
+
+              int tempG = neighbor->g + tempGVal;
               bool newPath = false;
 
               // check if openSet does contain neighbor
@@ -115,18 +124,6 @@ class Game {
       closedSet[i]->draw(window, sf::Color(239, 71, 111));
     }
   }
-
-  // void resetColors(sf::RenderWindow& window) {
-  //   for (int i = 0; i < grid.COLS; ++i) {
-  //     for (int j = 0; j < grid.ROWS; ++j) {
-  //       Cell& cell = grid.getCell(i, j);
-  //       if (!cell.startingCell && !cell.endingCell && !cell.wall) {
-  //         cell.draw(
-  //             window);  // This will reset to the default transparent color
-  //       }
-  //     }
-  //   }
-  // }
 
   void resetColors(sf::RenderWindow& window) {
     for (int i = 0; i < grid.COLS; ++i) {
