@@ -31,6 +31,7 @@ class Game {
   Cell* current;
 
  public:
+  bool startGame = false;
   Game(Grid& grid_set) : grid(grid_set) {
     start = &grid.getCell(0, 0);
     end = &grid.getCell(grid.COLS - 1, grid.ROWS - 1);
@@ -41,62 +42,64 @@ class Game {
   }
 
   void run() {
-    if (!gameEnd) {
-      if (openSet.size()) {
-        int winner = 0;
+    if (startGame) {
+      if (!gameEnd) {
+        if (openSet.size()) {
+          int winner = 0;
 
-        for (int i = 0; i < openSet.size(); i++) {
-          if (openSet[i]->f < openSet[winner]->f) {
-            winner = i;
+          for (int i = 0; i < openSet.size(); i++) {
+            if (openSet[i]->f < openSet[winner]->f) {
+              winner = i;
+            }
           }
-        }
 
-        current = openSet[winner];
+          current = openSet[winner];
 
-        if (current == end) {
-          Utility::message("Done: Reached The end");
-          gameEnd = true;
-          return;
-        }
+          if (current == end) {
+            Utility::message("Done: Reached The end");
+            gameEnd = true;
+            return;
+          }
 
-        openSet.erase(openSet.begin() + winner);
-        closedSet.push_back(current);
+          openSet.erase(openSet.begin() + winner);
+          closedSet.push_back(current);
 
-        for (int i = 0; i < current->neighbors.size(); i++) {
-          Cell* neighbor = current->neighbors[i];
+          for (int i = 0; i < current->neighbors.size(); i++) {
+            Cell* neighbor = current->neighbors[i];
 
-          // check if closedSet does not include neighbor
-          if (!neighbor->wall && std::find(closedSet.begin(), closedSet.end(),
-                                           neighbor) == closedSet.end()) {
-            int tempG = neighbor->g + 1;
-            bool newPath = false;
+            // check if closedSet does not include neighbor
+            if (!neighbor->wall && std::find(closedSet.begin(), closedSet.end(),
+                                             neighbor) == closedSet.end()) {
+              int tempG = neighbor->g + 1;
+              bool newPath = false;
 
-            // check if openSet does contain neighbor
-            if (std::find(openSet.begin(), openSet.end(), neighbor) !=
-                openSet.end()) {
-              if (tempG < neighbor->g) {
+              // check if openSet does contain neighbor
+              if (std::find(openSet.begin(), openSet.end(), neighbor) !=
+                  openSet.end()) {
+                if (tempG < neighbor->g) {
+                  neighbor->g = tempG;
+                  newPath = true;
+                }
+              } else {
                 neighbor->g = tempG;
+                openSet.push_back(neighbor);
                 newPath = true;
               }
-            } else {
-              neighbor->g = tempG;
-              openSet.push_back(neighbor);
-              newPath = true;
-            }
 
-            if (newPath) {
-              sf::Vector2f pointA(neighbor->i, neighbor->j);
-              sf::Vector2f pointB(end->i, end->j);
-              neighbor->h = heuristic(pointA, pointB);
-              neighbor->f = neighbor->h + neighbor->g;
-              neighbor->setPrevious(current);
+              if (newPath) {
+                sf::Vector2f pointA(neighbor->i, neighbor->j);
+                sf::Vector2f pointB(end->i, end->j);
+                neighbor->h = heuristic(pointA, pointB);
+                neighbor->f = neighbor->h + neighbor->g;
+                neighbor->setPrevious(current);
+              }
             }
           }
-        }
 
-      } else {
-        Utility::message("Done");
-        gameEnd = true;
+        } else {
+          Utility::message("Done");
+          gameEnd = true;
+        }
       }
     }
   }
@@ -143,7 +146,7 @@ class Game {
   }
 
   void drawPath(sf::RenderWindow& window) {
-    if (true) {
+    if (gameEnd) {
       path.clear();
       Cell* temp = current;
       path.push_back(temp);

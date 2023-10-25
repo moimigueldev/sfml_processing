@@ -26,8 +26,8 @@ class Cell {
     j = j_pos;
 
     shape.setPosition(i * dims.x, j * dims.y);
-    shape.setSize(dims);
-    // shape.setSize(sf::Vector2f(dims.x - 1, dims.y - 1));
+    // shape.setSize(dims);
+    shape.setSize(sf::Vector2f(dims.x - 1, dims.y - 1));
     shape.setFillColor(sf::Color::Transparent);
     shape.setOutlineThickness(1);
     shape.setOutlineColor(sf::Color(255, 255, 255, 100));
@@ -37,7 +37,7 @@ class Cell {
     center.setFillColor(sf::Color::Red);
     center.setPosition(shape.getPosition().x, shape.getPosition().y);
 
-    setupWall();
+    // setupWall();
   }
 
   template <typename T>
@@ -102,8 +102,8 @@ class Cell {
 
   void setupWall() {
     float randomFloat = Utility::genRandomFloat(0, 1.0f);
-    if (randomFloat < 0.25f) {
-      shape.setFillColor(sf::Color(0, 0, 0, 100));
+    if (randomFloat < 0.35f) {
+      shape.setFillColor(sf::Color(0, 0, 0, 255));
       wall = true;
     }
   }

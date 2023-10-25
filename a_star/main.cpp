@@ -18,16 +18,16 @@ int main() {
 
   // Main Loop
   while (window.isOpen()) {
-    WindowUtility::handleCloseEvent(window);
+    WindowUtility::handleCloseEvent(window, game);
 
     window.clear(WindowUtility::bgColor);
 
     grid.draw(window);
 
     game.run();
-    game.resetColors(window);
-    // game.drawOpenSet(window);
-    // game.drawClosedSet(window);
+    // game.resetColors(window);
+    game.drawOpenSet(window);
+    game.drawClosedSet(window);
     game.drawPath(window);
 
     window.display();
