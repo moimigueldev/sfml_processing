@@ -1,1 +1,21 @@
+# Compiled Artifacts
+*.o
+*.a
+*.so
+*.dylib
+*.dSYM
+
+# Executables (add specific names if they are consistent)
+main
+run
+
+# Temporary/Backup Files
+*~
 .DS_Store
+
+# Archive Files
+*.zip
+
+# IDE/Editor Specific (example for VS Code)
+.vscode/
+
