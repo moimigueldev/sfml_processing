@@ -16,6 +16,4 @@ run
 # Archive Files
 *.zip
 
-# IDE/Editor Specific (example for VS Code)
-.vscode/
 
