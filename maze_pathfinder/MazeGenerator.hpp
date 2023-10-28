@@ -7,13 +7,24 @@
 
 class MazeGenerator {
  private:
+  bool mazeComplete = false;
+  std::vector<Cell*> stack;
+  Cell* current = nullptr;
+  Cell* next = nullptr;
+
  public:
   MazeGenerator() {}
 
-  static void createMaze(std::vector<std::vector<Cell> >& grid) {
-    int rows, cols = grid.size();
-    Utility::message(rows);
-    Utility::message(cols);
+  void createMaze(std::vector<std::vector<Cell> >& grid) {
+    current = &grid[0][0];
+    current->highlight = true;
+    std::vector<Cell*> neighbors = current->checkNeighbors(grid);
+    // int rows, cols = grid.size();
+    while (!mazeComplete) {
+      Utility::message("Hello");
+
+      mazeComplete = true;
+    }
   }
 
   void draw(sf::RenderWindow& window) {}

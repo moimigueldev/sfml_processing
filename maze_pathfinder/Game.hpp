@@ -17,7 +17,11 @@ class Game {
     rows = windowSize.y / w;
     setupGrid();
 
-    // MazeGenerator::createMaze(grid);
+    // grid[0][0].highlight = true;
+    // grid[10][7].visited = true;
+    MazeGenerator maze = MazeGenerator();
+
+    maze.createMaze(grid);
   }
 
   void setupGrid() {
@@ -28,7 +32,7 @@ class Game {
 
     for (int i = 0; i < cols; i++) {
       for (int j = 0; j < rows; j++) {
-        grid[i][j] = Cell(i, j, sf::Vector2f(cols, rows), w);
+        grid[i][j] = Cell(i, j, w);
       }
     }
   }
