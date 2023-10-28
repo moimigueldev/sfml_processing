@@ -16,26 +16,10 @@ class MazeGenerator {
   MazeGenerator() {}
 
   void createMaze(std::vector<std::vector<Cell> >& grid, int cols, int rows) {
-    // if (next) {
-    //   next.visited = true;
-    //   stack.push(current);
-    //   removeWalls(current, next);
-    //   current = next;
-    // } else {
-    //   if (stack.length) {
-    //     current = stack.pop();
-    //   } else {
-    //     console.log("DONE");
-    //     noLoop();
-    //   }
-    // }
-
     current = &grid[0][0];
     current->visited = true;
 
     while (!mazeComplete) {
-      // Utility::message("In here");
-      // current->highlight = true;
       Cell* next = current->checkNeighbors(grid, cols, rows);
 
       if (next != nullptr) {
@@ -50,7 +34,7 @@ class MazeGenerator {
         current = stack.back();
         stack.pop_back();
       } else {
-        Utility::message("DONe");
+        Utility::message("Done");
         mazeComplete = true;
       }
     }

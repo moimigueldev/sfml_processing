@@ -68,7 +68,6 @@ class Cell {
     }
 
     if (!neighbors.empty()) {
-      // int index = Utility::genRandomInt(0, neighbors.size());
       int index = Utility::genRandomInt(0, neighbors.size() - 1);
       return neighbors[index];
     }
@@ -111,6 +110,7 @@ class Cell {
     window.draw(rightLine);
     window.draw(bottomLine);
     window.draw(leftLine);
+
     if (highlight) {
       window.draw(highlightShape);
     }
@@ -153,6 +153,6 @@ class Cell {
 
     visitedShape.setPosition(position);
     visitedShape.setSize(sf::Vector2f(w, w));
-    visitedShape.setFillColor(sf::Color(255, 0, 255, 100));
+    visitedShape.setFillColor(sf::Color(255, 0, 255, 0));
   }
 };
