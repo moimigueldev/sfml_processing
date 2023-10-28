@@ -15,13 +15,15 @@ class Game {
   Game(sf::Vector2f& windowSize) {
     cols = windowSize.x / w;
     rows = windowSize.y / w;
+    Utility::message(rows);
+    Utility::message(cols);
     setupGrid();
 
     // grid[0][0].highlight = true;
     // grid[10][7].visited = true;
     MazeGenerator maze = MazeGenerator();
 
-    maze.createMaze(grid);
+    maze.createMaze(grid, cols, rows);
   }
 
   void setupGrid() {

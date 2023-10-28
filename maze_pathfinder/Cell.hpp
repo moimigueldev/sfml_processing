@@ -22,7 +22,8 @@ class Cell {
   sf::VertexArray leftLine = sf::VertexArray(sf::Lines, 2);
   bool visited = false;
   bool highlight = false;
-  Cell(int i_pos, int j_pos, int& width) {
+
+  Cell(int i_pos, int j_pos, int &width) {
     i = i_pos;
     j = j_pos;
     w = width;
@@ -34,15 +35,78 @@ class Cell {
     setupWalls();
   }
 
-  std::vector<Cell*> checkNeighbors(std::vector<std::vector<Cell> >& grid) {
-    std::vector<Cell*> neighbors;
+  Cell *checkNeighbors(std::vector<std::vector<Cell> > &grid, int &cols,
+                       int &rows) {
+    std::vector<Cell *> neighbors;
 
-    // will do stuff here
+    if (i > 0) {  // check above
+      Cell *top = &grid[i - 1][j];
+      if (!top->visited) {
+        neighbors.push_back(top);
+      }
+    }
 
-    return neighbors;
+    if (j + 1 < cols) {  // check right
+      Cell *right = &grid[i][j + 1];
+      if (!right->visited) {
+        neighbors.push_back(right);
+      }
+    }
+
+    if (i + 1 < rows) {  // check below
+      Cell *bottom = &grid[i + 1][j];
+      if (!bottom->visited) {
+        neighbors.push_back(bottom);
+      }
+    }
+
+    if (j > 0) {  // check left
+      Cell *left = &grid[i][j - 1];
+      if (!left->visited) {
+        neighbors.push_back(left);
+      }
+    }
+
+    if (!neighbors.empty()) {
+      // int index = Utility::genRandomInt(0, neighbors.size());
+      int index = Utility::genRandomInt(0, neighbors.size() - 1);
+      return neighbors[index];
+    }
+
+    return nullptr;
   }
 
-  void draw(sf::RenderWindow& window) {
+  void removeWalls(Cell &neighbor) {
+    int x = i - neighbor.i;
+
+    if (x == 1) {
+      leftLine[0].color.a = 0;
+      leftLine[1].color.a = 0;
+      neighbor.rightLine[0].color.a = 0;
+      neighbor.rightLine[1].color.a = 0;
+    } else if (x == -1) {
+      rightLine[0].color.a = 0;
+      rightLine[1].color.a = 0;
+      neighbor.leftLine[0].color.a = 0;
+      neighbor.leftLine[1].color.a = 0;
+    }
+
+    int y = j - neighbor.j;
+
+    if (y == 1) {
+      topLine[0].color.a = 0;
+      topLine[1].color.a = 0;
+      neighbor.bottomLine[0].color.a = 0;
+      neighbor.bottomLine[1].color.a = 0;
+    } else if (y == -1) {
+      bottomLine[0].color.a = 0;
+      bottomLine[1].color.a = 0;
+      neighbor.topLine[0].color.a = 0;
+      neighbor.topLine[1].color.a = 0;
+    }
+  }
+
+  void draw(sf::RenderWindow &window) {
     window.draw(topLine);
     window.draw(rightLine);
     window.draw(bottomLine);
@@ -92,4 +156,3 @@ class Cell {
     visitedShape.setFillColor(sf::Color(255, 0, 255, 100));
   }
 };
-

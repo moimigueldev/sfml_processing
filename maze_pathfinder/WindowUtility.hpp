@@ -7,7 +7,7 @@
 namespace WindowUtility {
 
 sf::Color bgColor = sf::Color(68, 70, 83);
-const int FRAMERATE = 60;
+const int FRAMERATE = 20;
 
 void handleEvents(sf::RenderWindow& window) {
   sf::Event event;
