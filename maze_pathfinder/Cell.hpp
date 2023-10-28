@@ -9,6 +9,7 @@ class Cell {
   sf::Color wallColor = sf::Color(183, 183, 183);
   sf::RectangleShape highlightShape;
   sf::RectangleShape visitedShape;
+  sf::RectangleShape wallShape;
 
  public:
   int i;
@@ -22,6 +23,17 @@ class Cell {
   sf::VertexArray leftLine = sf::VertexArray(sf::Lines, 2);
   bool visited = false;
   bool highlight = false;
+  Cell *previous = nullptr;
+  int g = 0;
+  int h = 0;
+  int f = 0;
+  bool startingCell = false;
+  bool endingCell = false;
+  std::vector<Cell *> neighborCells;
+  bool wall = false;
+
+  // top, right, bottom, left
+  std::array<bool, 4> walls = {true, true, true, true};
 
   Cell(int i_pos, int j_pos, int &width) {
     i = i_pos;
@@ -46,14 +58,14 @@ class Cell {
       }
     }
 
-    if (j + 1 < cols) {  // check right
+    if (j + 1 < rows) {  // check right
       Cell *right = &grid[i][j + 1];
       if (!right->visited) {
         neighbors.push_back(right);
       }
     }
 
-    if (i + 1 < rows) {  // check below
+    if (i + 1 < cols) {  // check below
       Cell *bottom = &grid[i + 1][j];
       if (!bottom->visited) {
         neighbors.push_back(bottom);
@@ -83,11 +95,15 @@ class Cell {
       leftLine[1].color.a = 0;
       neighbor.rightLine[0].color.a = 0;
       neighbor.rightLine[1].color.a = 0;
+      walls[3] = false;           // update left wall for current cell
+      neighbor.walls[1] = false;  // update right wall for neighbor
     } else if (x == -1) {
       rightLine[0].color.a = 0;
       rightLine[1].color.a = 0;
       neighbor.leftLine[0].color.a = 0;
       neighbor.leftLine[1].color.a = 0;
+      walls[1] = false;           // update right wall for current cell
+      neighbor.walls[3] = false;  // update left wall for neighbor
     }
 
     int y = j - neighbor.j;
@@ -97,11 +113,15 @@ class Cell {
       topLine[1].color.a = 0;
       neighbor.bottomLine[0].color.a = 0;
       neighbor.bottomLine[1].color.a = 0;
+      walls[0] = false;           // update top wall for current cell
+      neighbor.walls[2] = false;  // update bottom wall for neighbor
     } else if (y == -1) {
       bottomLine[0].color.a = 0;
       bottomLine[1].color.a = 0;
       neighbor.topLine[0].color.a = 0;
       neighbor.topLine[1].color.a = 0;
+      walls[2] = false;           // update bottom wall for current cell
+      neighbor.walls[0] = false;  // update top wall for neighbor
     }
   }
 
@@ -118,6 +138,51 @@ class Cell {
     if (visited) {
       window.draw(visitedShape);
     }
+
+    // todo: is a black wall necessary?
+    // if (wall) {
+    //   window.draw(wallShape);
+    // }
+  }
+
+  void setupNeighbors(sf::Vector2i colsRows,
+                      std::vector<std::vector<Cell> > &grid) {
+    int cols = colsRows.x;
+    int rows = colsRows.y;
+
+    // Top
+    if (j > 0) {
+      Cell *topNeighbor = &grid[i][j - 1];
+      if (!walls[0] && !topNeighbor->walls[2]) {
+        neighborCells.push_back(topNeighbor);
+      }
+    }
+
+    // Right
+    if (i + 1 < cols) {
+      Cell *rightNeighbor = &grid[i + 1][j];
+      if (!walls[1] && !rightNeighbor->walls[3]) {
+        neighborCells.push_back(rightNeighbor);
+      }
+    }
+
+    // Bottom
+    if (j + 1 < rows) {
+      Cell *bottomNeighbor = &grid[i][j + 1];
+      if (!walls[2] && !bottomNeighbor->walls[0]) {
+        neighborCells.push_back(bottomNeighbor);
+      }
+    }
+
+    // Left
+    if (i > 0) {
+      Cell *leftNeighbor = &grid[i - 1][j];
+      if (!walls[3] && !leftNeighbor->walls[1]) {
+        neighborCells.push_back(leftNeighbor);
+      }
+    }
+
+    Utility::message(neighborCells.size());
   }
 
   void setupWalls() {
@@ -144,6 +209,11 @@ class Cell {
     leftLine[1] = position;
     leftLine[0].color = wallColor;
     leftLine[1].color = wallColor;
+
+    float randomFloat = Utility::genRandomFloat(0, 1.0f);
+    if (randomFloat < 0.35f) {
+      wall = true;
+    }
   }
 
   void setupShapes() {
@@ -154,5 +224,9 @@ class Cell {
     visitedShape.setPosition(position);
     visitedShape.setSize(sf::Vector2f(w, w));
     visitedShape.setFillColor(sf::Color(255, 0, 255, 0));
+
+    wallShape.setPosition(position);
+    wallShape.setSize(sf::Vector2f(w, w));
+    wallShape.setFillColor(sf::Color(0, 0, 0));
   }
 };

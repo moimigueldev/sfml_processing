@@ -25,6 +25,12 @@ class Game {
 
     maze.createMaze(grid, cols, rows);
 
+    for (int i = 0; i < cols; i++) {
+      for (int j = 0; j < rows; j++) {
+        grid[i][j].setupNeighbors(sf::Vector2i(cols, rows), grid);
+      }
+    }
+
     path = PathFinder(grid, cols, rows);
   }
 
