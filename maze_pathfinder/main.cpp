@@ -14,6 +14,10 @@ int main() {
                           "Maze Pathfinder");
   window.setFramerateLimit(WindowUtility::FRAMERATE);
 
+  Utility::FPSCounter fpsCounter;  // Step 1: Create an instance of FPSCounter
+
+  sf::Clock clock;  // Create a clock to measure elapsed time
+
   // Main Loop
   while (window.isOpen()) {
     WindowUtility::handleEvents(window);
@@ -22,6 +26,9 @@ int main() {
     game.draw(window);
 
     window.display();
+    float elapsedTime =
+        clock.restart().asSeconds();  // Get the elapsed time in seconds
+    fpsCounter.update(elapsedTime);
   }
 
   return 0;
