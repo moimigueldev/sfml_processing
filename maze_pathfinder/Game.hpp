@@ -10,7 +10,7 @@ class Game {
  private:
  public:
   std::vector<std::vector<Cell> > grid;
-  int w = 100;
+  int w = 30;
   int cols;
   int rows;
   MazeGenerator maze;
@@ -48,9 +48,14 @@ class Game {
   }
 
   void draw(sf::RenderWindow& window) {
-    renderGrid(window);
-
     path.draw(window);
+    if (!path.gameEnd) {
+      path.drawOpenSet(window);
+      path.drawClosedSet(window);
+    }
+    path.drawPath(window);
+
+    // renderGrid(window);
   }
 
   void renderGrid(sf::RenderWindow& window) {

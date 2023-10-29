@@ -6,10 +6,13 @@
 
 class Cell {
  private:
-  sf::Color wallColor = sf::Color(183, 183, 183);
+  // sf::Color wallColor = sf::Color(183, 183, 183);
+  sf::Color wallColor = sf::Color(82, 255, 184);
   sf::RectangleShape highlightShape;
   sf::RectangleShape visitedShape;
   sf::RectangleShape wallShape;
+  sf::RectangleShape listSets;
+  sf::RectangleShape pathShape;
 
  public:
   int i;
@@ -86,6 +89,8 @@ class Cell {
 
     return nullptr;
   }
+
+  void setPrevious(Cell *prev) { previous = prev; }
 
   void removeWalls(Cell &neighbor) {
     int x = i - neighbor.i;
@@ -181,8 +186,6 @@ class Cell {
         neighborCells.push_back(leftNeighbor);
       }
     }
-
-    Utility::message(neighborCells.size());
   }
 
   void setupWalls() {
@@ -228,5 +231,23 @@ class Cell {
     wallShape.setPosition(position);
     wallShape.setSize(sf::Vector2f(w, w));
     wallShape.setFillColor(sf::Color(0, 0, 0));
+
+    listSets.setPosition(position);
+    listSets.setSize(sf::Vector2f(w, w));
+    listSets.setFillColor(sf::Color(0, 0, 0));
+
+    pathShape.setPosition(position);
+    pathShape.setSize(sf::Vector2f(w, w));
+    pathShape.setFillColor(sf::Color(0, 0, 255, 10));
+  }
+
+  void drawListSets(sf::RenderWindow &window, sf::Color color) {
+    listSets.setFillColor(color);
+    window.draw(listSets);
+  }
+
+  void drawPath(sf::RenderWindow &window, sf::Color color) {
+    pathShape.setFillColor(color);
+    window.draw(pathShape);
   }
 };
