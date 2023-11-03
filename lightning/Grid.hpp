@@ -8,12 +8,12 @@
 
 class Grid {
  private:
-  int size = 50;
-  int cols = WindowUtility::windowSize.x / size;
-  int rows = WindowUtility::windowSize.y / size;
   std::vector<std::vector<Cell> > grid;
 
  public:
+  int size = 20;
+  int cols = WindowUtility::windowSize.x / size;
+  int rows = WindowUtility::windowSize.y / size;
   Grid() {
     grid.resize(cols);
     for (int i = 0; i < cols; i++) {
