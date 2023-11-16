@@ -25,9 +25,12 @@ int main() {
     grid.draw(window);
 
     game.run();
-    // game.resetColors(window);
-    game.drawOpenSet(window);
-    game.drawClosedSet(window);
+
+    if (!game.gameEnd) {
+      Utility::message(game.gameEnd);
+      game.drawOpenSet(window);
+      game.drawClosedSet(window);
+    }
     game.drawPath(window);
 
     window.display();

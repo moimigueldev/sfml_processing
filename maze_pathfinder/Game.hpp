@@ -10,7 +10,7 @@ class Game {
  private:
  public:
   std::vector<std::vector<Cell> > grid;
-  int w = 60;
+  int w = 30;
   int cols;
   int rows;
   MazeGenerator maze;

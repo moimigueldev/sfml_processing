@@ -8,7 +8,7 @@
 namespace WindowUtility {
 
 sf::Color bgColor = sf::Color(68, 70, 83);
-const int FRAMERATE = 60;
+const int FRAMERATE = 5;
 
 void handleCloseEvent(sf::RenderWindow& window, Game& game, Grid& grid) {
   sf::Event event;

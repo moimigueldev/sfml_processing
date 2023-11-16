@@ -7,7 +7,7 @@
 class Cell {
  private:
   // sf::Color wallColor = sf::Color(183, 183, 183);
-  sf::Color wallColor = sf::Color(82, 255, 184);
+  sf::Color wallColor = sf::Color(244, 211, 94);
   sf::RectangleShape highlightShape;
   sf::RectangleShape visitedShape;
   sf::RectangleShape wallShape;
@@ -222,7 +222,7 @@ class Cell {
   void setupShapes() {
     highlightShape.setPosition(position);
     highlightShape.setSize(sf::Vector2f(w, w));
-    highlightShape.setFillColor(sf::Color::Green);
+    highlightShape.setFillColor(sf::Color(242, 100, 25));
 
     visitedShape.setPosition(position);
     visitedShape.setSize(sf::Vector2f(w, w));

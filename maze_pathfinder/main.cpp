@@ -5,7 +5,7 @@
 #include "WindowUtility.hpp"
 #include "utility.hpp"
 
-sf::Vector2f windowSize = sf::Vector2f(800.0f, 800.0f);
+sf::Vector2f windowSize = sf::Vector2f(900.0f, 900.0f);
 
 int main() {
   Game game = Game(windowSize);

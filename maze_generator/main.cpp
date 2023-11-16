@@ -6,9 +6,9 @@
 
 #include "Cell.hpp"
 
-sf::Vector2f windowSize = sf::Vector2f(1000.0f, 1000.0f);
+sf::Vector2f windowSize = sf::Vector2f(800.0f, 800.0f);
 sf::Color bgColor = sf::Color(51, 50, 50);
-const int FRAMERATE = 30;
+const int FRAMERATE = 10;
 const int CELL_WIDTH = 40;
 
 const int cols = floor(windowSize.x / CELL_WIDTH);

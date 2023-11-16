@@ -6,8 +6,8 @@
 
 namespace WindowUtility {
 
-sf::Color bgColor = sf::Color(68, 70, 83);
-const int FRAMERATE = 5;
+sf::Color bgColor = sf::Color(38, 38, 38);
+const int FRAMERATE = 15;
 
 void handleEvents(sf::RenderWindow& window) {
   sf::Event event;

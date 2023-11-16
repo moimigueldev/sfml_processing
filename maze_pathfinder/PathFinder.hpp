@@ -130,7 +130,7 @@ class PathFinder {
       }
 
       for (int i = 0; i < path.size(); i++) {
-        path[i]->drawPath(window, sf::Color(65, 51, 122));
+        path[i]->drawPath(window, sf::Color(106, 96, 242));
       }
     }
   }

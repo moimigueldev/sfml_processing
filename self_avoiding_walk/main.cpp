@@ -8,8 +8,8 @@
 
 sf::Vector2f windowSize = sf::Vector2f(1000.0f, 800.0f);
 sf::Color bgColor = sf::Color(68, 70, 83);
-const int FRAMERATE = 10;
-const int PATH_SIZE = 4;
+const int FRAMERATE = 30;
+const int PATH_SIZE = 6;
 const float COLS = floor(windowSize.x / PATH_SIZE);
 const float ROWS = floor(windowSize.y / PATH_SIZE);
 int count = 0;

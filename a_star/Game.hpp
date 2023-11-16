@@ -27,10 +27,10 @@ class Game {
   Cell* start;
   Cell* end;
   Grid& grid;
-  bool gameEnd = false;
   Cell* current;
 
  public:
+  bool gameEnd = false;
   bool startGame = false;
   Game(Grid& grid_set) : grid(grid_set) {
     start = &grid.getCell(0, 0);
@@ -114,12 +114,14 @@ class Game {
   }
 
   void drawOpenSet(sf::RenderWindow& window) {
+    if (gameEnd) return;
     for (int i = 0; i < openSet.size(); i++) {
       openSet[i]->draw(window, sf::Color(6, 214, 160, 50));
     }
   }
 
   void drawClosedSet(sf::RenderWindow& window) {
+    if (gameEnd) return;
     for (int i = 0; i < closedSet.size(); i++) {
       closedSet[i]->draw(window, sf::Color(239, 71, 111));
     }
@@ -131,19 +133,25 @@ class Game {
         Cell& cell = grid.getCell(i, j);
         if (!cell.startingCell && !cell.endingCell && !cell.wall) {
           cell.draw(
-              window);  // This will reset to the default transparent color
+              window,
+              sf::Color(
+                  68, 70,
+                  83));  // This will reset to the default transparent color
         }
       }
     }
 
     // Reset colors for the closedSet
     for (Cell* cell : closedSet) {
-      cell->draw(window);  // Reset to the default transparent color
+      cell->draw(
+          window,
+          sf::Color(68, 70, 83));  // Reset to the default transparent color
     }
   }
 
   void drawPath(sf::RenderWindow& window) {
     if (gameEnd) {
+      resetColors(window);
       path.clear();
       Cell* temp = current;
       path.push_back(temp);
